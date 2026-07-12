@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react'
 import prd1 from './assets/ProductImages/Prd1.jpeg'
 import prd2 from './assets/ProductImages/Prd2.jpeg'
 import prd3 from './assets/ProductImages/Prd3.jpeg'
@@ -15,6 +16,11 @@ interface Product {
   description: string;
   weight: string;
   price: string;
+  ingredients: string;
+  origin: string;
+  shelfLife: string;
+  benefits: string[];
+  usage: string;
 }
 
 const products: Product[] = [
@@ -25,7 +31,12 @@ const products: Product[] = [
     badge: 'Best Seller',
     description: 'Sourced from the heart of Guntur, our sun-dried red chillies are ground to perfection, offering a rich crimson color and an intense authentic heat.',
     weight: '250g / 500g',
-    price: 'Pure & Organic'
+    price: 'Pure & Organic',
+    ingredients: '100% Pure sun-dried Guntur Red Chillies',
+    origin: 'Guntur, Andhra Pradesh, India',
+    shelfLife: '12 Months',
+    benefits: ['Rich in Vitamin C & antioxidants', 'Boosts metabolism and aids weight loss', 'Acts as a natural pain reliever'],
+    usage: 'Perfect for traditional Indian curries, spicy gravies, tandoori marinades, and stir-fries.'
   },
   {
     id: 'prd2',
@@ -34,7 +45,12 @@ const products: Product[] = [
     badge: 'High Curcumin',
     description: 'Traditionally ground Salem turmeric with high curcumin content. Adds a vibrant golden hue and rich immunity-boosting properties to your meals.',
     weight: '200g / 500g',
-    price: '100% Pure'
+    price: '100% Pure',
+    ingredients: '100% Organic Salem Turmeric Rhizomes',
+    origin: 'Salem, Tamil Nadu, India',
+    shelfLife: '18 Months',
+    benefits: ['High Curcumin content (5%+)', 'Powerful anti-inflammatory properties', 'Improves digestion and boosts immunity'],
+    usage: 'Ideal for everyday cooking, golden turmeric milk, herbal teas, and wellness remedies.'
   },
   {
     id: 'prd3',
@@ -43,7 +59,12 @@ const products: Product[] = [
     badge: 'Traditional Recipe',
     description: 'A royal blend of 12 hand-roasted spices crafted from a legacy recipe, adding robust warmth, aroma, and rich flavor to any vegetarian or meat dish.',
     weight: '100g / 250g',
-    price: 'Aromatic'
+    price: 'Aromatic',
+    ingredients: 'Cinnamon, cardamom, cloves, cumin, coriander, black pepper, nutmeg, star anise, fennel, bay leaf',
+    origin: 'Deccan Region, India',
+    shelfLife: '12 Months',
+    benefits: ['Improves digestion and gut health', 'Combats bad breath and improves oral hygiene', 'Rich in powerful antioxidants'],
+    usage: 'Sprinkle a small pinch at the final stage of cooking curries, biryanis, and gravies to lock in maximum aroma.'
   },
   {
     id: 'prd4',
@@ -51,7 +72,12 @@ const products: Product[] = [
     image: prd4,
     description: 'Selected black peppercorns from the Malabar coast, slow-crushed to preserve the essential volatile oils and deliver a sharp, lingering bite.',
     weight: '100g / 200g',
-    price: 'Freshly Ground'
+    price: 'Freshly Ground',
+    ingredients: '100% Whole Malabar Black Peppercorns',
+    origin: 'Malabar Coast, Kerala, India',
+    shelfLife: '12 Months',
+    benefits: ['Enhances nutrient absorption in the body', 'Promotes gut health and relieves flatulence', 'Natural anti-bacterial qualities'],
+    usage: 'Adds a warm, sharp kick to eggs, salads, clear soups, pastas, grilled meats, and stir-fried vegetables.'
   },
   {
     id: 'prd5',
@@ -60,7 +86,12 @@ const products: Product[] = [
     badge: 'Popular',
     description: 'Prized for its brilliant red hue and mild warmth, this premium spice gives your curries a stunning visual appeal without overpowering heat.',
     weight: '250g / 500g',
-    price: 'Premium Grade'
+    price: 'Premium Grade',
+    ingredients: '100% Premium Kashmiri Red Chillies',
+    origin: 'Kashmir Valley, India',
+    shelfLife: '12 Months',
+    benefits: ['Rich in vitamin A and beta-carotenes', 'Extremely low heat index, gentle on stomach', 'Supports healthy skin and eyes'],
+    usage: 'Perfect for achieving that signature deep red color in Butter Chicken, Paneer Tikka, Rogan Josh, and dry rubs.'
   },
   {
     id: 'prd6',
@@ -68,7 +99,12 @@ const products: Product[] = [
     image: prd6,
     description: 'Made from the finest coriander seeds, slow-roasted to bring out their sweet, citrusy aroma and earthy undertones.',
     weight: '250g / 500g',
-    price: 'Rich Aroma'
+    price: 'Rich Aroma',
+    ingredients: '100% Roasted Coriander (Dhania) Seeds',
+    origin: 'Madhya Pradesh, India',
+    shelfLife: '12 Months',
+    benefits: ['Helps reduce bad cholesterol levels', 'Assists in regulating blood sugar levels', 'Aids the overall digestive process'],
+    usage: 'Forms the foundational base spice for sambar, rasam, curries, stews, and spice pastes.'
   },
   {
     id: 'prd7',
@@ -76,7 +112,12 @@ const products: Product[] = [
     image: prd7,
     description: 'Crispy, premium whole cumin seeds packed with high essential oil content, releasing a warm and robust aroma when roasted.',
     weight: '100g / 250g',
-    price: 'Handselected'
+    price: 'Handselected',
+    ingredients: '100% Whole Cumin (Jeera) Seeds',
+    origin: 'Gujarat, India',
+    shelfLife: '24 Months',
+    benefits: ['Aids in secretion of digestive enzymes', 'Excellent source of dietary iron', 'Combats internal inflammation'],
+    usage: 'Perfect for tempering (tadka) in hot oil or ghee at the beginning of cooking dals, rice, and vegetable curries.'
   }
 ];
 
@@ -85,177 +126,412 @@ function App() {
   const formattedPhone = '+917349391969';
   const globalWhatsappMessage = encodeURIComponent('Hello Deccan Spices! I visited your website and would like to learn more or place an order.');
 
-  const getProductWhatsappLink = (productName: string) => {
-    const msg = encodeURIComponent(`Hello Deccan Spices! I would like to order the product: "${productName}". Please share details and pricing.`);
+  const [theme, setTheme] = useState<'light' | 'dark'>(() => {
+    const saved = localStorage.getItem('theme');
+    if (saved === 'light' || saved === 'dark') return saved;
+    return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  });
+
+  const [selectedProductId, setSelectedProductId] = useState<string | null>(null);
+  const [selectedWeight, setSelectedWeight] = useState<string>('');
+
+  const currentProduct = products.find(p => p.id === selectedProductId) || null;
+
+  // Initialize selectedWeight when product details page loads
+  useEffect(() => {
+    if (currentProduct) {
+      const weights = currentProduct.weight.split('/');
+      setSelectedWeight(weights[0].trim());
+    }
+  }, [selectedProductId, currentProduct]);
+
+  useEffect(() => {
+    if (theme === 'dark') {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+    localStorage.setItem('theme', theme);
+  }, [theme]);
+
+  const toggleTheme = () => {
+    setTheme(prev => (prev === 'light' ? 'dark' : 'light'));
+  };
+
+  const navigateToProduct = (productId: string) => {
+    setSelectedProductId(productId);
+    window.scrollTo({ top: 0, behavior: 'instant' });
+  };
+
+  const navigateHome = () => {
+    setSelectedProductId(null);
+    window.scrollTo({ top: 0, behavior: 'instant' });
+  };
+
+  const getProductWhatsappLink = (productName: string, weight?: string) => {
+    const weightText = weight ? ` (${weight})` : '';
+    const msg = encodeURIComponent(`Hello Deccan Spices! I would like to order: "${productName}"${weightText}. Please share the pricing details and shipping instructions.`);
     return `https://wa.me/91${contactNumber}?text=${msg}`;
   };
+
+  // Get 3 related products
+  const relatedProducts = currentProduct 
+    ? products.filter(p => p.id !== currentProduct.id).slice(0, 3)
+    : [];
 
   return (
     <div className="app-container">
       {/* Sticky Header */}
       <header className="header" id="home">
         <div className="header-container">
-          <a href="#home" className="logo-link">
+          <button onClick={navigateHome} className="logo-link-btn" style={{ background: 'none', border: 'none', cursor: 'pointer' }}>
             <span className="logo-text">Deccan<span className="logo-sub">Spices</span></span>
-          </a>
-          <nav>
-            <ul className="nav-menu">
-              <li><a href="#home" className="nav-link">Home</a></li>
-              <li><a href="#why-us" className="nav-link">Our Quality</a></li>
-              <li><a href="#products" className="nav-link">Our Spices</a></li>
-              <li><a href="#contact" className="nav-link">Contact</a></li>
-              <li>
-                <a 
-                  href={`https://wa.me/91${contactNumber}?text=${globalWhatsappMessage}`} 
-                  target="_blank" 
-                  rel="noopener noreferrer" 
-                  className="btn-header-whatsapp"
-                >
-                  <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
-                    <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946C.06 5.348 5.397.01 12.008.01c3.202.001 6.212 1.246 8.477 3.514 2.266 2.268 3.507 5.28 3.505 8.484-.004 6.657-5.34 11.997-11.953 11.997-2.005-.001-3.973-.502-5.724-1.455L0 24zm6.59-4.846c1.6.95 3.188 1.449 4.825 1.451 5.436 0 9.86-4.37 9.864-9.799.002-2.63-1.023-5.101-2.885-6.963C16.59 1.981 14.117.957 11.99.957 6.558.957 2.13 5.327 2.128 10.756c-.001 1.681.453 3.32 1.316 4.795l-.997 3.64 3.74-.977zm12.115-4.523c-.3-.15-1.775-.875-2.049-.974-.275-.098-.475-.148-.674.15-.2.299-.775.974-.949 1.173-.175.199-.349.224-.649.075-.3-.15-1.265-.466-2.41-1.487-.893-.795-1.495-1.778-1.67-2.078-.175-.3-.018-.462.13-.61.135-.133.3-.349.45-.523.15-.174.2-.299.3-.499.1-.2.05-.375-.025-.524-.075-.15-.674-1.62-.924-2.22-.244-.589-.493-.51-.674-.519-.172-.008-.371-.01-.57-.01-.2 0-.524.074-.798.373-.275.3-1.047 1.022-1.047 2.492 0 1.47 1.071 2.888 1.22 3.088.15.199 2.107 3.218 5.104 4.512.713.308 1.27.492 1.704.63.717.228 1.369.196 1.885.119.574-.085 1.775-.726 2.024-1.397.25-.671.25-1.246.175-1.397-.075-.15-.275-.249-.575-.399z"/>
-                  </svg>
-                  Order on WhatsApp
-                </a>
-              </li>
-            </ul>
-          </nav>
+          </button>
+          <div className="header-actions-wrapper">
+            <button
+              onClick={toggleTheme}
+              className="theme-toggle-btn"
+              aria-label="Toggle Theme"
+            >
+              {theme === 'dark' ? (
+                // Sun Icon (Switch to Light Mode)
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+                  <path d="M12 2.25a.75.75 0 01.75.75v2.25a.75.75 0 01-1.5 0V3a.75.75 0 01.75-.75zM6.162 5.738a.75.75 0 010 1.06l-1.59 1.591a.75.75 0 11-1.061-1.06l1.59-1.592a.75.75 0 011.06 0zm11.676 0a.75.75 0 011.06 0l1.59 1.591a.75.75 0 11-1.06 1.06l-1.591-1.59a.75.75 0 010-1.061zM12 5.25a6.75 6.75 0 100 13.5 6.75 6.75 0 000-13.5zM3 12a.75.75 0 01.75-.75h2.25a.75.75 0 010 1.5H3.75A.75.75 0 013 12zm15 0a.75.75 0 01.75-.75h2.25a.75.75 0 010 1.5h-2.25A.75.75 0 0118 12zM5.738 17.838a.75.75 0 011.06 0l1.591 1.59a.75.75 0 11-1.06 1.06l-1.59-1.59a.75.75 0 010-1.06zm12.524 0a.75.75 0 010 1.06l-1.59 1.59a.75.75 0 11-1.061-1.06l1.59-1.59a.75.75 0 011.06 0zM12 17.25a.75.75 0 01.75.75v2.25a.75.75 0 01-1.5 0V18a.75.75 0 01.75-.75z" />
+                </svg>
+              ) : (
+                // Moon Icon (Switch to Dark Mode)
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+                  <path d="M9.528 1.718a.75.75 0 01.162.819A8.97 8.97 0 009 6a9 9 0 009 9 8.97 8.97 0 003.463-.69.75.75 0 01.981.98 10.503 10.503 0 11-11.948-11.947.75.75 0 01.812-.178z" />
+                </svg>
+              )}
+            </button>
+            <nav>
+              <ul className="nav-menu">
+                {selectedProductId ? (
+                  <li><button onClick={navigateHome} className="nav-link-btn font-medium">← Back to Spices</button></li>
+                ) : (
+                  <>
+                    <li><a href="#home" className="nav-link">Home</a></li>
+                    <li><a href="#why-us" className="nav-link">Our Quality</a></li>
+                    <li><a href="#products" className="nav-link">Our Spices</a></li>
+                    <li><a href="#contact" className="nav-link">Contact</a></li>
+                  </>
+                )}
+                <li>
+                  <a 
+                    href={`https://wa.me/91${contactNumber}?text=${globalWhatsappMessage}`} 
+                    target="_blank" 
+                    rel="noopener noreferrer" 
+                    className="btn-header-whatsapp"
+                  >
+                    <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
+                      <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946C.06 5.348 5.397.01 12.008.01c3.202.001 6.212 1.246 8.477 3.514 2.266 2.268 3.507 5.28 3.505 8.484-.004 6.657-5.34 11.997-11.953 11.997-2.005-.001-3.973-.502-5.724-1.455L0 24zm6.59-4.846c1.6.95 3.188 1.449 4.825 1.451 5.436 0 9.86-4.37 9.864-9.799.002-2.63-1.023-5.101-2.885-6.963C16.59 1.981 14.117.957 11.99.957 6.558.957 2.13 5.327 2.128 10.756c-.001 1.681.453 3.32 1.316 4.795l-.997 3.64 3.74-.977zm12.115-4.523c-.3-.15-1.775-.875-2.049-.974-.275-.098-.475-.148-.674.15-.2.299-.775.974-.949 1.173-.175.199-.349.224-.649.075-.3-.15-1.265-.466-2.41-1.487-.893-.795-1.495-1.778-1.67-2.078-.175-.3-.018-.462.13-.61.135-.133.3-.349.45-.523.15-.174.2-.299.3-.499.1-.2.05-.375-.025-.524-.075-.15-.674-1.62-.924-2.22-.244-.589-.493-.51-.674-.519-.172-.008-.371-.01-.57-.01-.2 0-.524.074-.798.373-.275.3-1.047 1.022-1.047 2.492 0 1.47 1.071 2.888 1.22 3.088.15.199 2.107 3.218 5.104 4.512.713.308 1.27.492 1.704.63.717.228 1.369.196 1.885.119.574-.085 1.775-.726 2.024-1.397.25-.671.25-1.246.175-1.397-.075-.15-.275-.249-.575-.399z"/>
+                    </svg>
+                    Order Now
+                  </a>
+                </li>
+              </ul>
+            </nav>
+          </div>
         </div>
       </header>
 
-      {/* Hero Section */}
-      <section className="hero">
-        <div className="hero-container">
-          <span className="hero-tagline">100% Pure &amp; Aromatic</span>
-          <h1 className="hero-title">Bring the Authentic Taste of Deccan to Your Kitchen</h1>
-          <p className="hero-description">
-            Discover a premium range of handpicked, sun-dried, and traditionally ground spices. Direct from local farms with zero chemical additives or preservatives.
-          </p>
-          <div className="hero-actions">
-            <a href="#products" className="btn-primary">Explore Products</a>
-            <a 
-              href={`https://wa.me/91${contactNumber}?text=${globalWhatsappMessage}`} 
-              target="_blank" 
-              rel="noopener noreferrer" 
-              className="btn-secondary"
-            >
-              Contact Us
-            </a>
-          </div>
-        </div>
-      </section>
+      {/* Main Content Area */}
+      {selectedProductId && currentProduct ? (
+        /* PRODUCT DETAIL VIEW */
+        <div className="product-detail-view fade-in">
+          <div className="section-container">
+            {/* Breadcrumbs */}
+            <div className="breadcrumb-nav">
+              <button onClick={navigateHome} className="breadcrumb-link">Home</button>
+              <span className="breadcrumb-separator">/</span>
+              <span className="breadcrumb-current">{currentProduct.name}</span>
+            </div>
 
-      {/* Quality / Features Section */}
-      <section className="features" id="why-us">
-        <div className="section-container">
-          <div className="section-header">
-            <span className="section-tag">Our Guarantee</span>
-            <h2 className="section-title">Why Deccan Spices Stands Out</h2>
-            <p className="section-description">
-              We focus on traditional values, ensuring that our spices retain their natural essential oils, distinct color, and original taste.
-            </p>
-          </div>
-          <div className="features-grid">
-            <div className="feature-card">
-              <div className="feature-icon-wrapper">
-                {/* Custom Organic SVG icon */}
-                <svg className="feature-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707m0-12.728l.707.707m12.728 12.728l.707-.707M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-              </div>
-              <h3 className="feature-title">100% Organic Sourcing</h3>
-              <p className="feature-desc">Sourced directly from local farmers practicing chemical-free farming to give you premium nature-fresh spices.</p>
-            </div>
-            <div className="feature-card">
-              <div className="feature-icon-wrapper">
-                {/* Custom Traditional Stone SVG icon */}
-                <svg className="feature-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
-                </svg>
-              </div>
-              <h3 className="feature-title">Traditionally Stone Ground</h3>
-              <p className="feature-desc">Slow-ground using traditional techniques to ensure the temperature stays low, locking in essential aroma oils.</p>
-            </div>
-            <div className="feature-card">
-              <div className="feature-icon-wrapper">
-                {/* Custom Premium Quality SVG icon */}
-                <svg className="feature-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
-                </svg>
-              </div>
-              <h3 className="feature-title">No Preservatives</h3>
-              <p className="feature-desc">Absolutely zero artificial food colors, msg, anti-caking agents, or chemical preservatives. Pure spice from farm to kitchen.</p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Products Showcase Grid */}
-      <section className="products" id="products">
-        <div className="section-container">
-          <div className="section-header">
-            <span className="section-tag">Authentic Selection</span>
-            <h2 className="section-title">Our Premium Spice Collection</h2>
-            <p className="section-description">
-              Handcrafted in small batches to preserve ultimate freshness. Click any product to order directly on WhatsApp.
-            </p>
-          </div>
-          <div className="products-grid">
-            {products.map((product) => (
-              <div className="product-card" key={product.id}>
-                <div className="product-img-wrapper">
-                  <img src={product.image} alt={product.name} className="product-img" />
-                  {product.badge && <span className="product-badge">{product.badge}</span>}
+            {/* Main Details Panel */}
+            <div className="detail-panel">
+              <div className="detail-image-section">
+                <div className="detail-image-wrapper">
+                  <img src={currentProduct.image} alt={currentProduct.name} className="detail-image" />
+                  {currentProduct.badge && <span className="detail-badge">{currentProduct.badge}</span>}
                 </div>
-                <div className="product-content">
-                  <h3 className="product-title">{product.name}</h3>
-                  <p className="product-desc">{product.description}</p>
-                  <div className="product-meta">
-                    <span className="product-weight">Weight: {product.weight}</span>
-                    <span className="product-price">{product.price}</span>
+              </div>
+              <div className="detail-info-section">
+                <h1 className="detail-title">{currentProduct.name}</h1>
+                
+                <div className="detail-reviews">
+                  <span className="stars">⭐⭐⭐⭐⭐</span>
+                  <span className="reviews-text">4.9 / 5.0 (Customer Rated)</span>
+                </div>
+
+                <p className="detail-tagline-desc">{currentProduct.description}</p>
+
+                {/* Weight Selector */}
+                <div className="weight-selector-container">
+                  <h3 className="selector-title">Select Pack Weight:</h3>
+                  <div className="weight-options">
+                    {currentProduct.weight.split('/').map((w) => {
+                      const weightVal = w.trim();
+                      const isSelected = selectedWeight === weightVal;
+                      return (
+                        <button
+                          key={weightVal}
+                          className={`weight-opt-btn ${isSelected ? 'active' : ''}`}
+                          onClick={() => setSelectedWeight(weightVal)}
+                        >
+                          {weightVal}
+                        </button>
+                      );
+                    })}
                   </div>
+                </div>
+
+                <div className="detail-pricing-box">
+                  <span className="pricing-label">Availability:</span>
+                  <span className="pricing-value">Ready to Dispatch</span>
+                </div>
+
+                {/* Direct Ordering CTAs */}
+                <div className="detail-action-buttons">
                   <a 
-                    href={getProductWhatsappLink(product.name)}
+                    href={getProductWhatsappLink(currentProduct.name, selectedWeight)}
                     target="_blank" 
                     rel="noopener noreferrer" 
-                    className="btn-product-whatsapp"
+                    className="btn-whatsapp-large w-full justify-center"
                   >
                     <svg viewBox="0 0 24 24" fill="currentColor">
                       <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946C.06 5.348 5.397.01 12.008.01c3.202.001 6.212 1.246 8.477 3.514 2.266 2.268 3.507 5.28 3.505 8.484-.004 6.657-5.34 11.997-11.953 11.997-2.005-.001-3.973-.502-5.724-1.455L0 24zm6.59-4.846c1.6.95 3.188 1.449 4.825 1.451 5.436 0 9.86-4.37 9.864-9.799.002-2.63-1.023-5.101-2.885-6.963C16.59 1.981 14.117.957 11.99.957 6.558.957 2.13 5.327 2.128 10.756c-.001 1.681.453 3.32 1.316 4.795l-.997 3.64 3.74-.977zm12.115-4.523c-.3-.15-1.775-.875-2.049-.974-.275-.098-.475-.148-.674.15-.2.299-.775.974-.949 1.173-.175.199-.349.224-.649.075-.3-.15-1.265-.466-2.41-1.487-.893-.795-1.495-1.778-1.67-2.078-.175-.3-.018-.462.13-.61.135-.133.3-.349.45-.523.15-.174.2-.299.3-.499.1-.2.05-.375-.025-.524-.075-.15-.674-1.62-.924-2.22-.244-.589-.493-.51-.674-.519-.172-.008-.371-.01-.57-.01-.2 0-.524.074-.798.373-.275.3-1.047 1.022-1.047 2.492 0 1.47 1.071 2.888 1.22 3.088.15.199 2.107 3.218 5.104 4.512.713.308 1.27.492 1.704.63.717.228 1.369.196 1.885.119.574-.085 1.775-.726 2.024-1.397.25-.671.25-1.246.175-1.397-.075-.15-.275-.249-.575-.399z"/>
                     </svg>
-                    Order via WhatsApp
+                    Send Order via WhatsApp
+                  </a>
+                  <a href={`tel:${formattedPhone}`} className="btn-call-direct">
+                    📞 Call to Order: {contactNumber}
                   </a>
                 </div>
               </div>
-            ))}
-          </div>
-        </div>
-      </section>
+            </div>
 
-      {/* Contact & CTA Section */}
-      <section className="contact-cta" id="contact">
-        <div className="cta-container">
-          <h2 className="cta-title">Order Fresh Spices Today</h2>
-          <p className="cta-desc">
-            We deliver pure, premium quality spices directly to your doorstep. Have questions, bulk orders, or custom requirement inquiries? Reach out to us directly!
-          </p>
-          <div className="cta-links">
-            <a href={`tel:${formattedPhone}`} className="cta-phone">
-              📞 {contactNumber}
-            </a>
-            <a 
-              href={`https://wa.me/91${contactNumber}?text=${globalWhatsappMessage}`} 
-              target="_blank" 
-              rel="noopener noreferrer" 
-              className="btn-whatsapp-large"
-            >
-              <svg viewBox="0 0 24 24" fill="currentColor">
-                <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946C.06 5.348 5.397.01 12.008.01c3.202.001 6.212 1.246 8.477 3.514 2.266 2.268 3.507 5.28 3.505 8.484-.004 6.657-5.34 11.997-11.953 11.997-2.005-.001-3.973-.502-5.724-1.455L0 24zm6.59-4.846c1.6.95 3.188 1.449 4.825 1.451 5.436 0 9.86-4.37 9.864-9.799.002-2.63-1.023-5.101-2.885-6.963C16.59 1.981 14.117.957 11.99.957 6.558.957 2.13 5.327 2.128 10.756c-.001 1.681.453 3.32 1.316 4.795l-.997 3.64 3.74-.977zm12.115-4.523c-.3-.15-1.775-.875-2.049-.974-.275-.098-.475-.148-.674.15-.2.299-.775.974-.949 1.173-.175.199-.349.224-.649.075-.3-.15-1.265-.466-2.41-1.487-.893-.795-1.495-1.778-1.67-2.078-.175-.3-.018-.462.13-.61.135-.133.3-.349.45-.523.15-.174.2-.299.3-.499.1-.2.05-.375-.025-.524-.075-.15-.674-1.62-.924-2.22-.244-.589-.493-.51-.674-.519-.172-.008-.371-.01-.57-.01-.2 0-.524.074-.798.373-.275.3-1.047 1.022-1.047 2.492 0 1.47 1.071 2.888 1.22 3.088.15.199 2.107 3.218 5.104 4.512.713.308 1.27.492 1.704.63.717.228 1.369.196 1.885.119.574-.085 1.775-.726 2.024-1.397.25-.671.25-1.246.175-1.397-.075-.15-.275-.249-.575-.399z"/>
-              </svg>
-              Chat on WhatsApp
-            </a>
+            {/* Spec Tables & Benefits */}
+            <div className="product-tabbed-info">
+              <div className="info-column">
+                <h3 className="sub-section-title">Health Benefits &amp; Features</h3>
+                <ul className="benefits-list">
+                  {currentProduct.benefits.map((benefit, i) => (
+                    <li key={i} className="benefit-item">
+                      <span className="check-icon">✓</span>
+                      <span>{benefit}</span>
+                    </li>
+                  ))}
+                  <li className="benefit-item">
+                    <span className="check-icon">✓</span>
+                    <span>100% natural, free from coloring or MSG</span>
+                  </li>
+                  <li className="benefit-item">
+                    <span className="check-icon">✓</span>
+                    <span>Packed in dynamic hygiene-seal packaging</span>
+                  </li>
+                </ul>
+
+                <h3 className="sub-section-title" style={{ marginTop: '30px' }}>Culinary Suggestions</h3>
+                <p className="culinary-desc">{currentProduct.usage}</p>
+              </div>
+
+              <div className="info-column">
+                <h3 className="sub-section-title">Product Specifications</h3>
+                <table className="specs-table">
+                  <tbody>
+                    <tr>
+                      <td className="spec-label">Ingredients</td>
+                      <td className="spec-val">{currentProduct.ingredients}</td>
+                    </tr>
+                    <tr>
+                      <td className="spec-label">Product Origin</td>
+                      <td className="spec-val">{currentProduct.origin}</td>
+                    </tr>
+                    <tr>
+                      <td className="spec-label">Shelf Life</td>
+                      <td className="spec-val">{currentProduct.shelfLife}</td>
+                    </tr>
+                    <tr>
+                      <td className="spec-label">Form</td>
+                      <td className="spec-val">Premium Whole / Milled Powder</td>
+                    </tr>
+                    <tr>
+                      <td className="spec-label">Preservatives</td>
+                      <td className="spec-val">None (100% Organic Retention)</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            {/* Related Spices Gallery */}
+            <div className="related-spices-section">
+              <h2 className="related-title">You May Also Like</h2>
+              <div className="products-grid">
+                {relatedProducts.map((p) => (
+                  <div 
+                    className="product-card cursor-pointer" 
+                    key={p.id}
+                    onClick={() => navigateToProduct(p.id)}
+                  >
+                    <div className="product-img-wrapper">
+                      <img src={p.image} alt={p.name} className="product-img" loading="lazy" />
+                      {p.badge && <span className="product-badge">{p.badge}</span>}
+                    </div>
+                    <div className="product-content">
+                      <h3 className="product-title">{p.name}</h3>
+                      <p className="product-desc line-clamp">{p.description}</p>
+                      <div className="product-meta">
+                        <span className="product-weight">Weight: {p.weight}</span>
+                        <span className="product-price">{p.price}</span>
+                      </div>
+                      <button className="btn-product-view-details">
+                        View Product Details
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
         </div>
-      </section>
+      ) : (
+        /* LANDING PAGE VIEW */
+        <>
+          {/* Hero Section */}
+          <section className="hero">
+            {/* Glow Effects */}
+            <div className="hero-glow hero-glow-1"></div>
+            <div className="hero-glow hero-glow-2"></div>
+            
+            <div className="hero-container">
+              <span className="hero-tagline">100% Pure &amp; Aromatic</span>
+              <h1 className="hero-title">Bring the Authentic Taste of Deccan to Your Kitchen</h1>
+              <p className="hero-description">
+                Discover a premium range of handpicked, sun-dried, and traditionally ground spices. Direct from local farms with zero chemical additives or preservatives.
+              </p>
+              <div className="hero-actions">
+                <a href="#products" className="btn-primary">Explore Products</a>
+                <a 
+                  href={`https://wa.me/91${contactNumber}?text=${globalWhatsappMessage}`} 
+                  target="_blank" 
+                  rel="noopener noreferrer" 
+                  className="btn-secondary"
+                >
+                  Contact Us
+                </a>
+              </div>
+            </div>
+          </section>
+
+          {/* Quality / Features Section */}
+          <section className="features" id="why-us">
+            <div className="section-container">
+              <div className="section-header">
+                <span className="section-tag">Our Guarantee</span>
+                <h2 className="section-title">Why Deccan Spices Stands Out</h2>
+                <p className="section-description">
+                  We focus on traditional values, ensuring that our spices retain their natural essential oils, distinct color, and original taste.
+                </p>
+              </div>
+              <div className="features-grid">
+                <div className="feature-card">
+                  <div className="feature-icon-wrapper">
+                    <svg className="feature-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707m0-12.728l.707.707m12.728 12.728l.707-.707M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                  </div>
+                  <h3 className="feature-title">100% Organic Sourcing</h3>
+                  <p className="feature-desc">Sourced directly from local farmers practicing chemical-free farming to give you premium nature-fresh spices.</p>
+                </div>
+                <div className="feature-card">
+                  <div className="feature-icon-wrapper">
+                    <svg className="feature-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
+                    </svg>
+                  </div>
+                  <h3 className="feature-title">Traditionally Stone Ground</h3>
+                  <p className="feature-desc">Slow-ground using traditional techniques to ensure the temperature stays low, locking in essential aroma oils.</p>
+                </div>
+                <div className="feature-card">
+                  <div className="feature-icon-wrapper">
+                    <svg className="feature-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
+                    </svg>
+                  </div>
+                  <h3 className="feature-title">No Preservatives</h3>
+                  <p className="feature-desc">Absolutely zero artificial food colors, msg, anti-caking agents, or chemical preservatives. Pure spice from farm to kitchen.</p>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          {/* Products Showcase Grid */}
+          <section className="products" id="products">
+            <div className="section-container">
+              <div className="section-header">
+                <span className="section-tag">Authentic Selection</span>
+                <h2 className="section-title">Our Premium Spice Collection</h2>
+                <p className="section-description">
+                  Handcrafted in small batches to preserve ultimate freshness. Click any spice to view its detailed specifications and select packaging.
+                </p>
+              </div>
+              <div className="products-grid">
+                {products.map((product) => (
+                  <div 
+                    className="product-card cursor-pointer" 
+                    key={product.id}
+                    onClick={() => navigateToProduct(product.id)}
+                  >
+                    <div className="product-img-wrapper">
+                      <img src={product.image} alt={product.name} className="product-img" loading="lazy" />
+                      {product.badge && <span className="product-badge">{product.badge}</span>}
+                    </div>
+                    <div className="product-content">
+                      <h3 className="product-title">{product.name}</h3>
+                      <p className="product-desc line-clamp">{product.description}</p>
+                      <div className="product-meta">
+                        <span className="product-weight">Weight: {product.weight}</span>
+                        <span className="product-price">{product.price}</span>
+                      </div>
+                      <button className="btn-product-view-details">
+                        View Product Details
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </section>
+
+          {/* Contact & CTA Section */}
+          <section className="contact-cta" id="contact">
+            <div className="cta-container">
+              <h2 className="cta-title">Order Fresh Spices Today</h2>
+              <p className="cta-desc">
+                We deliver pure, premium quality spices directly to your doorstep. Have questions, bulk orders, or custom requirement inquiries? Reach out to us directly!
+              </p>
+              <div className="cta-links">
+                <a href={`tel:${formattedPhone}`} className="cta-phone">
+                  📞 {contactNumber}
+                </a>
+                <a 
+                  href={`https://wa.me/91${contactNumber}?text=${globalWhatsappMessage}`} 
+                  target="_blank" 
+                  rel="noopener noreferrer" 
+                  className="btn-whatsapp-large"
+                >
+                  <svg viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946C.06 5.348 5.397.01 12.008.01c3.202.001 6.212 1.246 8.477 3.514 2.266 2.268 3.507 5.28 3.505 8.484-.004 6.657-5.34 11.997-11.953 11.997-2.005-.001-3.973-.502-5.724-1.455L0 24zm6.59-4.846c1.6.95 3.188 1.449 4.825 1.451 5.436 0 9.86-4.37 9.864-9.799.002-2.63-1.023-5.101-2.885-6.963C16.59 1.981 14.117.957 11.99.957 6.558.957 2.13 5.327 2.128 10.756c-.001 1.681.453 3.32 1.316 4.795l-.997 3.64 3.74-.977zm12.115-4.523c-.3-.15-1.775-.875-2.049-.974-.275-.098-.475-.148-.674.15-.2.299-.775.974-.949 1.173-.175.199-.349.224-.649.075-.3-.15-1.265-.466-2.41-1.487-.893-.795-1.495-1.778-1.67-2.078-.175-.3-.018-.462.13-.61.135-.133.3-.349.45-.523.15-.174.2-.299.3-.499.1-.2.05-.375-.025-.524-.075-.15-.674-1.62-.924-2.22-.244-.589-.493-.51-.674-.519-.172-.008-.371-.01-.57-.01-.2 0-.524.074-.798.373-.275.3-1.047 1.022-1.047 2.492 0 1.47 1.071 2.888 1.22 3.088.15.199 2.107 3.218 5.104 4.512.713.308 1.27.492 1.704.63.717.228 1.369.196 1.885.119.574-.085 1.775-.726 2.024-1.397.25-.671.25-1.246.175-1.397-.075-.15-.275-.249-.575-.399z"/>
+                  </svg>
+                  Chat on WhatsApp
+                </a>
+              </div>
+            </div>
+          </section>
+        </>
+      )}
 
       {/* Footer */}
       <footer className="footer">
@@ -284,6 +560,19 @@ function App() {
           <p>Handcrafted Pure Indian Spices</p>
         </div>
       </footer>
+
+      {/* Floating WhatsApp Widget */}
+      <a 
+        href={`https://wa.me/91${contactNumber}?text=${globalWhatsappMessage}`} 
+        target="_blank" 
+        rel="noopener noreferrer" 
+        className="floating-whatsapp"
+        aria-label="Chat with us on WhatsApp"
+      >
+        <svg viewBox="0 0 24 24" fill="currentColor">
+          <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946C.06 5.348 5.397.01 12.008.01c3.202.001 6.212 1.246 8.477 3.514 2.266 2.268 3.507 5.28 3.505 8.484-.004 6.657-5.34 11.997-11.953 11.997-2.005-.001-3.973-.502-5.724-1.455L0 24zm6.59-4.846c1.6.95 3.188 1.449 4.825 1.451 5.436 0 9.86-4.37 9.864-9.799.002-2.63-1.023-5.101-2.885-6.963C16.59 1.981 14.117.957 11.99.957 6.558.957 2.13 5.327 2.128 10.756c-.001 1.681.453 3.32 1.316 4.795l-.997 3.64 3.74-.977zm12.115-4.523c-.3-.15-1.775-.875-2.049-.974-.275-.098-.475-.148-.674.15-.2.299-.775.974-.949 1.173-.175.199-.349.224-.649.075-.3-.15-1.265-.466-2.41-1.487-.893-.795-1.495-1.778-1.67-2.078-.175-.3-.018-.462.13-.61.135-.133.3-.349.45-.523.15-.174.2-.299.3-.499.1-.2.05-.375-.025-.524-.075-.15-.674-1.62-.924-2.22-.244-.589-.493-.51-.674-.519-.172-.008-.371-.01-.57-.01-.2 0-.524.074-.798.373-.275.3-1.047 1.022-1.047 2.492 0 1.47 1.071 2.888 1.22 3.088.15.199 2.107 3.218 5.104 4.512.713.308 1.27.492 1.704.63.717.228 1.369.196 1.885.119.574-.085 1.775-.726 2.024-1.397.25-.671.25-1.246.175-1.397-.075-.15-.275-.249-.575-.399z"/>
+        </svg>
+      </a>
     </div>
   )
 }

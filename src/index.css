@@ -40,22 +40,20 @@
   --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --light: #0f1013;
-    --white: #16171a;
-    --gray-50: #1b1c20;
-    --gray-100: #232429;
-    --gray-200: #2d2f36;
-    --gray-400: #9ca3af;
-    --gray-600: #cbd5e1;
-    --gray-700: #f1f5f9;
-    --dark: #f9fafb;
-    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.5);
-    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.6);
-    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.7);
-    --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.8);
-  }
+:root.dark {
+  --light: #0f1013;
+  --white: #16171a;
+  --gray-50: #1b1c20;
+  --gray-100: #232429;
+  --gray-200: #2d2f36;
+  --gray-400: #9ca3af;
+  --gray-600: #cbd5e1;
+  --gray-700: #f1f5f9;
+  --dark: #f9fafb;
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.5);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.6);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.7);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.8);
 }
 
 /* Global Reset & Base Styling */
@@ -77,6 +75,7 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow-x: hidden;
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
 }
 
 #root {
