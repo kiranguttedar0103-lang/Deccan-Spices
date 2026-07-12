@@ -133,10 +133,9 @@ function App() {
     return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
   });
 
-  // Theme transitions class state to avoid animations on initial load
   const [isThemeLoaded, setIsThemeLoaded] = useState(false);
 
-  // Initialize selected product ID from browser history search query (e.g. ?product=prd1)
+  // Initialize selected product ID from URL query parameters (e.g., ?product=prd1)
   const [selectedProductId, setSelectedProductId] = useState<string | null>(() => {
     const params = new URLSearchParams(window.location.search);
     return params.get('product');
@@ -158,7 +157,7 @@ function App() {
     }
   }, [selectedProductId, currentProduct]);
 
-  // Update theme with smooth transition
+  // Smooth theme loading
   useEffect(() => {
     if (theme === 'dark') {
       document.documentElement.classList.add('dark');
@@ -167,34 +166,30 @@ function App() {
     }
     localStorage.setItem('theme', theme);
     
-    // Enable transition animations only after mount/first load
     const timeout = setTimeout(() => {
       setIsThemeLoaded(true);
     }, 100);
     return () => clearTimeout(timeout);
   }, [theme]);
 
-  // Handle Hardware Back Button / Browser Navigation via PopState
+  // History Popstate Handling (Hardware Back Button support)
   useEffect(() => {
     const handlePopState = (event: PopStateEvent) => {
-      // If there is a productId state, navigate to it
       if (event.state && event.state.productId) {
         setSelectedProductId(event.state.productId);
       } else {
-        // Otherwise, return to home
         setSelectedProductId(null);
       }
       setIsLightboxOpen(false);
     };
 
-    // Listen for back/forward events
     window.addEventListener('popstate', handlePopState);
     return () => {
       window.removeEventListener('popstate', handlePopState);
     };
   }, []);
 
-  // Disable scroll when lightbox is open
+  // Body Scroll Lock for Lightbox Overlay
   useEffect(() => {
     if (isLightboxOpen) {
       document.body.style.overflow = 'hidden';
@@ -208,10 +203,8 @@ function App() {
   }, [isLightboxOpen]);
 
   const toggleTheme = () => {
-    // Add dynamic theme-changing class to document for circular/ripple transitions if desired
     document.documentElement.classList.add('theme-transitioning');
     setTheme(prev => (prev === 'light' ? 'dark' : 'light'));
-    
     setTimeout(() => {
       document.documentElement.classList.remove('theme-transitioning');
     }, 600);
@@ -220,24 +213,17 @@ function App() {
   const navigateToProduct = (productId: string) => {
     setSelectedProductId(productId);
     setIsLightboxOpen(false);
-    
-    // Push the state to history so back button works!
     window.history.pushState({ productId: productId }, '', `?product=${productId}`);
-    
     window.scrollTo({ top: 0, behavior: 'instant' });
   };
 
   const navigateHome = () => {
     setSelectedProductId(null);
     setIsLightboxOpen(false);
-    
-    // Push home state to history!
     window.history.pushState(null, '', window.location.pathname);
-    
     window.scrollTo({ top: 0, behavior: 'instant' });
   };
 
-  // Helper for UI back button (taps into history.back() or falls back to navigateHome)
   const handleUiBack = () => {
     if (window.history.state && window.history.state.productId) {
       window.history.back();
@@ -252,37 +238,24 @@ function App() {
     return `https://wa.me/91${contactNumber}?text=${msg}`;
   };
 
-  // Get 3 related products
   const relatedProducts = currentProduct 
     ? products.filter(p => p.id !== currentProduct.id).slice(0, 3)
     : [];
 
   return (
     <div className={`app-container ${isThemeLoaded ? 'theme-animated' : ''}`}>
-      {/* Sticky Header */}
+      {/* Dynamic Background Mesh */}
+      <div className="bg-mesh bg-mesh-1"></div>
+      <div className="bg-mesh bg-mesh-2"></div>
+
+      {/* Sticky Header Pill */}
       <header className="header" id="home">
         <div className="header-container">
           <button onClick={navigateHome} className="logo-link-btn" aria-label="Deccan Spices Home">
+            <img src="/logo.svg" className="header-logo-img" alt="Deccan Spices Logo" />
             <span className="logo-text">Deccan<span className="logo-sub">Spices</span></span>
           </button>
           <div className="header-actions-wrapper">
-            <button
-              onClick={toggleTheme}
-              className="theme-toggle-btn"
-              aria-label="Toggle Theme"
-            >
-              {theme === 'dark' ? (
-                // Sun Icon (Switch to Light Mode)
-                <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" className="rotate-icon">
-                  <path d="M12 2.25a.75.75 0 01.75.75v2.25a.75.75 0 01-1.5 0V3a.75.75 0 01.75-.75zM6.162 5.738a.75.75 0 010 1.06l-1.59 1.591a.75.75 0 11-1.061-1.06l1.59-1.592a.75.75 0 011.06 0zm11.676 0a.75.75 0 011.06 0l1.59 1.591a.75.75 0 11-1.06 1.06l-1.591-1.59a.75.75 0 010-1.061zM12 5.25a6.75 6.75 0 100 13.5 6.75 6.75 0 000-13.5zM3 12a.75.75 0 01.75-.75h2.25a.75.75 0 010 1.5H3.75A.75.75 0 013 12zm15 0a.75.75 0 01.75-.75h2.25a.75.75 0 010 1.5h-2.25A.75.75 0 0118 12zM5.738 17.838a.75.75 0 011.06 0l1.591 1.59a.75.75 0 11-1.06 1.06l-1.59-1.59a.75.75 0 010-1.06zm12.524 0a.75.75 0 010 1.06l-1.59 1.59a.75.75 0 11-1.061-1.06l1.59-1.59a.75.75 0 011.06 0zM12 17.25a.75.75 0 01.75.75v2.25a.75.75 0 01-1.5 0V18a.75.75 0 01.75-.75z" />
-                </svg>
-              ) : (
-                // Moon Icon (Switch to Dark Mode)
-                <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" className="rotate-icon">
-                  <path d="M9.528 1.718a.75.75 0 01.162.819A8.97 8.97 0 009 6a9 9 0 009 9 8.97 8.97 0 003.463-.69.75.75 0 01.981.98 10.503 10.503 0 11-11.948-11.947.75.75 0 01.812-.178z" />
-                </svg>
-              )}
-            </button>
             <nav>
               <ul className="nav-menu">
                 {selectedProductId ? (
@@ -302,14 +275,28 @@ function App() {
                     rel="noopener noreferrer" 
                     className="btn-header-whatsapp"
                   >
-                    <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
-                      <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946C.06 5.348 5.397.01 12.008.01c3.202.001 6.212 1.246 8.477 3.514 2.266 2.268 3.507 5.28 3.505 8.484-.004 6.657-5.34 11.997-11.953 11.997-2.005-.001-3.973-.502-5.724-1.455L0 24zm6.59-4.846c1.6.95 3.188 1.449 4.825 1.451 5.436 0 9.86-4.37 9.864-9.799.002-2.63-1.023-5.101-2.885-6.963C16.59 1.981 14.117.957 11.99.957 6.558.957 2.13 5.327 2.128 10.756c-.001 1.681.453 3.32 1.316 4.795l-.997 3.64 3.74-.977zm12.115-4.523c-.3-.15-1.775-.875-2.049-.974-.275-.098-.475-.148-.674.15-.2.299-.775.974-.949 1.173-.175.199-.349.224-.649.075-.3-.15-1.265-.466-2.41-1.487-.893-.795-1.495-1.778-1.67-2.078-.175-.3-.018-.462.13-.61.135-.133.3-.349.45-.523.15-.174.2-.299.3-.499.1-.2.05-.375-.025-.524-.075-.15-.674-1.62-.924-2.22-.244-.589-.493-.51-.674-.519-.172-.008-.371-.01-.57-.01-.2 0-.524.074-.798.373-.275.3-1.047 1.022-1.047 2.492 0 1.47 1.071 2.888 1.22 3.088.15.199 2.107 3.218 5.104 4.512.713.308 1.27.492 1.704.63.717.228 1.369.196 1.885.119.574-.085 1.775-.726 2.024-1.397.25-.671.25-1.246.175-1.397-.075-.15-.275-.249-.575-.399z"/>
-                    </svg>
                     Order Now
                   </a>
                 </li>
               </ul>
             </nav>
+            <button
+              onClick={toggleTheme}
+              className="theme-toggle-btn"
+              aria-label="Toggle Theme"
+            >
+              {theme === 'dark' ? (
+                // Sun Icon
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" className="rotate-icon">
+                  <path d="M12 2.25a.75.75 0 01.75.75v2.25a.75.75 0 01-1.5 0V3a.75.75 0 01.75-.75zM6.162 5.738a.75.75 0 010 1.06l-1.59 1.591a.75.75 0 11-1.061-1.06l1.59-1.592a.75.75 0 011.06 0zm11.676 0a.75.75 0 011.06 0l1.59 1.591a.75.75 0 11-1.06 1.06l-1.591-1.59a.75.75 0 010-1.061zM12 5.25a6.75 6.75 0 100 13.5 6.75 6.75 0 000-13.5zM3 12a.75.75 0 01.75-.75h2.25a.75.75 0 010 1.5H3.75A.75.75 0 013 12zm15 0a.75.75 0 01.75-.75h2.25a.75.75 0 010 1.5h-2.25A.75.75 0 0118 12zM5.738 17.838a.75.75 0 011.06 0l1.591 1.59a.75.75 0 11-1.06 1.06l-1.59-1.59a.75.75 0 010-1.06zm12.524 0a.75.75 0 010 1.06l-1.59 1.59a.75.75 0 11-1.061-1.06l1.59-1.59a.75.75 0 011.06 0zM12 17.25a.75.75 0 01.75.75v2.25a.75.75 0 01-1.5 0V18a.75.75 0 01.75-.75z" />
+                </svg>
+              ) : (
+                // Moon Icon
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" className="rotate-icon">
+                  <path d="M9.528 1.718a.75.75 0 01.162.819A8.97 8.97 0 009 6a9 9 0 009 9 8.97 8.97 0 003.463-.69.75.75 0 01.981.98 10.503 10.503 0 11-11.948-11.947.75.75 0 01.812-.178z" />
+                </svg>
+              )}
+            </button>
           </div>
         </div>
       </header>
@@ -337,9 +324,9 @@ function App() {
                   <img src={currentProduct.image} alt={currentProduct.name} className="detail-image" />
                   {currentProduct.badge && <span className="detail-badge">{currentProduct.badge}</span>}
                   
-                  {/* Click to Zoom indicator overlay */}
+                  {/* Zoom indicator */}
                   <div className="image-zoom-overlay">
-                    <svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="currentColor" strokeWidth="2.5">
+                    <svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="currentColor" strokeWidth="2">
                       <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v6m3-3H7" />
                     </svg>
                     <span>Click to Zoom</span>
@@ -423,7 +410,7 @@ function App() {
                   </li>
                 </ul>
 
-                <h3 className="sub-section-title" style={{ marginTop: '30px' }}>Culinary Suggestions</h3>
+                <h3 className="sub-section-title" style={{ marginTop: '35px' }}>Culinary Suggestions</h3>
                 <p className="culinary-desc">{currentProduct.usage}</p>
               </div>
 
@@ -492,13 +479,11 @@ function App() {
         <>
           {/* Hero Section */}
           <section className="hero">
-            {/* Glow Effects */}
-            <div className="hero-glow hero-glow-1"></div>
-            <div className="hero-glow hero-glow-2"></div>
-            
             <div className="hero-container">
               <span className="hero-tagline">100% Pure &amp; Aromatic</span>
-              <h1 className="hero-title">Bring the <span className="gradient-text">Authentic Taste</span> of Deccan to Your Kitchen</h1>
+              <h1 className="hero-title">
+                Bring the <span className="gradient-text italic-serif">Aromatic Heritage</span> of Deccan to Your Kitchen
+              </h1>
               <p className="hero-description">
                 Discover a premium range of handpicked, sun-dried, and traditionally ground spices. Direct from local farms with zero chemical additives or preservatives.
               </p>
@@ -631,7 +616,10 @@ function App() {
       <footer className="footer">
         <div className="footer-container">
           <div className="footer-brand">
-            <h3 className="footer-logo">Deccan<span>Spices</span></h3>
+            <h3 className="footer-logo">
+              <img src="/logo.svg" className="footer-logo-img" alt="Deccan Spices Logo" />
+              Deccan<span>Spices</span>
+            </h3>
             <p className="footer-tagline">
               Bringing authentic taste, traditional quality, and pure health from the heart of the Deccan plateau directly to your home.
             </p>

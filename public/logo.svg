@@ -5,7 +5,7 @@
   <!-- Inner Gold Circle Arc -->
   <path d="M 87.6 37.4 A 39 39 0 1 1 32.4 37.4" fill="none" stroke="#d97706" stroke-width="1.2" stroke-linecap="round" />
 
-  <!-- Center Serif Letter 'D' in gold -->
+  <!-- Center Serif Letter 'D' in golden color -->
   <text x="60" y="82" font-family="'Playfair Display', Georgia, serif" font-size="44" font-weight="800" fill="#d97706" text-anchor="middle">D</text>
 
   <!-- Golden Leaves on Top (Ditto shape matching branding crop) -->
