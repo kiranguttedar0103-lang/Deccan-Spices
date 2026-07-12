@@ -126,13 +126,22 @@ function App() {
   const formattedPhone = '+917349391969';
   const globalWhatsappMessage = encodeURIComponent('Hello Deccan Spices! I visited your website and would like to learn more or place an order.');
 
+  // Theme state
   const [theme, setTheme] = useState<'light' | 'dark'>(() => {
     const saved = localStorage.getItem('theme');
     if (saved === 'light' || saved === 'dark') return saved;
     return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
   });
 
-  const [selectedProductId, setSelectedProductId] = useState<string | null>(null);
+  // Theme transitions class state to avoid animations on initial load
+  const [isThemeLoaded, setIsThemeLoaded] = useState(false);
+
+  // Initialize selected product ID from browser history search query (e.g. ?product=prd1)
+  const [selectedProductId, setSelectedProductId] = useState<string | null>(() => {
+    const params = new URLSearchParams(window.location.search);
+    return params.get('product');
+  });
+
   const [selectedWeight, setSelectedWeight] = useState<string>('');
   
   // Lightbox Modal States
@@ -141,7 +150,7 @@ function App() {
 
   const currentProduct = products.find(p => p.id === selectedProductId) || null;
 
-  // Initialize selectedWeight when product details page loads
+  // Sync selectedWeight when the product changes
   useEffect(() => {
     if (currentProduct) {
       const weights = currentProduct.weight.split('/');
@@ -149,6 +158,7 @@ function App() {
     }
   }, [selectedProductId, currentProduct]);
 
+  // Update theme with smooth transition
   useEffect(() => {
     if (theme === 'dark') {
       document.documentElement.classList.add('dark');
@@ -156,7 +166,33 @@ function App() {
       document.documentElement.classList.remove('dark');
     }
     localStorage.setItem('theme', theme);
+    
+    // Enable transition animations only after mount/first load
+    const timeout = setTimeout(() => {
+      setIsThemeLoaded(true);
+    }, 100);
+    return () => clearTimeout(timeout);
   }, [theme]);
+
+  // Handle Hardware Back Button / Browser Navigation via PopState
+  useEffect(() => {
+    const handlePopState = (event: PopStateEvent) => {
+      // If there is a productId state, navigate to it
+      if (event.state && event.state.productId) {
+        setSelectedProductId(event.state.productId);
+      } else {
+        // Otherwise, return to home
+        setSelectedProductId(null);
+      }
+      setIsLightboxOpen(false);
+    };
+
+    // Listen for back/forward events
+    window.addEventListener('popstate', handlePopState);
+    return () => {
+      window.removeEventListener('popstate', handlePopState);
+    };
+  }, []);
 
   // Disable scroll when lightbox is open
   useEffect(() => {
@@ -172,19 +208,42 @@ function App() {
   }, [isLightboxOpen]);
 
   const toggleTheme = () => {
+    // Add dynamic theme-changing class to document for circular/ripple transitions if desired
+    document.documentElement.classList.add('theme-transitioning');
     setTheme(prev => (prev === 'light' ? 'dark' : 'light'));
+    
+    setTimeout(() => {
+      document.documentElement.classList.remove('theme-transitioning');
+    }, 600);
   };
 
   const navigateToProduct = (productId: string) => {
     setSelectedProductId(productId);
     setIsLightboxOpen(false);
+    
+    // Push the state to history so back button works!
+    window.history.pushState({ productId: productId }, '', `?product=${productId}`);
+    
     window.scrollTo({ top: 0, behavior: 'instant' });
   };
 
   const navigateHome = () => {
     setSelectedProductId(null);
     setIsLightboxOpen(false);
+    
+    // Push home state to history!
+    window.history.pushState(null, '', window.location.pathname);
+    
     window.scrollTo({ top: 0, behavior: 'instant' });
+  };
+
+  // Helper for UI back button (taps into history.back() or falls back to navigateHome)
+  const handleUiBack = () => {
+    if (window.history.state && window.history.state.productId) {
+      window.history.back();
+    } else {
+      navigateHome();
+    }
   };
 
   const getProductWhatsappLink = (productName: string, weight?: string) => {
@@ -199,11 +258,11 @@ function App() {
     : [];
 
   return (
-    <div className="app-container">
+    <div className={`app-container ${isThemeLoaded ? 'theme-animated' : ''}`}>
       {/* Sticky Header */}
       <header className="header" id="home">
         <div className="header-container">
-          <button onClick={navigateHome} className="logo-link-btn" style={{ background: 'none', border: 'none', cursor: 'pointer' }}>
+          <button onClick={navigateHome} className="logo-link-btn" aria-label="Deccan Spices Home">
             <span className="logo-text">Deccan<span className="logo-sub">Spices</span></span>
           </button>
           <div className="header-actions-wrapper">
@@ -214,12 +273,12 @@ function App() {
             >
               {theme === 'dark' ? (
                 // Sun Icon (Switch to Light Mode)
-                <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" className="rotate-icon">
                   <path d="M12 2.25a.75.75 0 01.75.75v2.25a.75.75 0 01-1.5 0V3a.75.75 0 01.75-.75zM6.162 5.738a.75.75 0 010 1.06l-1.59 1.591a.75.75 0 11-1.061-1.06l1.59-1.592a.75.75 0 011.06 0zm11.676 0a.75.75 0 011.06 0l1.59 1.591a.75.75 0 11-1.06 1.06l-1.591-1.59a.75.75 0 010-1.061zM12 5.25a6.75 6.75 0 100 13.5 6.75 6.75 0 000-13.5zM3 12a.75.75 0 01.75-.75h2.25a.75.75 0 010 1.5H3.75A.75.75 0 013 12zm15 0a.75.75 0 01.75-.75h2.25a.75.75 0 010 1.5h-2.25A.75.75 0 0118 12zM5.738 17.838a.75.75 0 011.06 0l1.591 1.59a.75.75 0 11-1.06 1.06l-1.59-1.59a.75.75 0 010-1.06zm12.524 0a.75.75 0 010 1.06l-1.59 1.59a.75.75 0 11-1.061-1.06l1.59-1.59a.75.75 0 011.06 0zM12 17.25a.75.75 0 01.75.75v2.25a.75.75 0 01-1.5 0V18a.75.75 0 01.75-.75z" />
                 </svg>
               ) : (
                 // Moon Icon (Switch to Dark Mode)
-                <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" className="rotate-icon">
                   <path d="M9.528 1.718a.75.75 0 01.162.819A8.97 8.97 0 009 6a9 9 0 009 9 8.97 8.97 0 003.463-.69.75.75 0 01.981.98 10.503 10.503 0 11-11.948-11.947.75.75 0 01.812-.178z" />
                 </svg>
               )}
@@ -227,7 +286,7 @@ function App() {
             <nav>
               <ul className="nav-menu">
                 {selectedProductId ? (
-                  <li><button onClick={navigateHome} className="nav-link-btn font-medium">← Back to Spices</button></li>
+                  <li><button onClick={handleUiBack} className="nav-link-btn font-medium">← Back to Spices</button></li>
                 ) : (
                   <>
                     <li><a href="#home" className="nav-link">Home</a></li>
@@ -257,12 +316,12 @@ function App() {
 
       {/* Main Content Area */}
       {selectedProductId && currentProduct ? (
-        /* PRODUCT DETAIL VIEW */
+        /* PRODUCT DETAIL VIEW SCREEN */
         <div className="product-detail-view fade-in">
           <div className="section-container">
             {/* Breadcrumbs */}
             <div className="breadcrumb-nav">
-              <button onClick={navigateHome} className="breadcrumb-link">Home</button>
+              <button onClick={handleUiBack} className="breadcrumb-link">Home</button>
               <span className="breadcrumb-separator">/</span>
               <span className="breadcrumb-current">{currentProduct.name}</span>
             </div>
@@ -273,14 +332,14 @@ function App() {
                 <div 
                   className="detail-image-wrapper cursor-pointer" 
                   onClick={() => setIsLightboxOpen(true)}
-                  title="Click to view full image"
+                  title="Click to zoom image"
                 >
                   <img src={currentProduct.image} alt={currentProduct.name} className="detail-image" />
                   {currentProduct.badge && <span className="detail-badge">{currentProduct.badge}</span>}
                   
                   {/* Click to Zoom indicator overlay */}
                   <div className="image-zoom-overlay">
-                    <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" strokeWidth="2">
+                    <svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="currentColor" strokeWidth="2.5">
                       <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v6m3-3H7" />
                     </svg>
                     <span>Click to Zoom</span>
@@ -288,11 +347,12 @@ function App() {
                 </div>
               </div>
               <div className="detail-info-section">
+                <span className="detail-tag-category">Premium Harvest</span>
                 <h1 className="detail-title">{currentProduct.name}</h1>
                 
                 <div className="detail-reviews">
                   <span className="stars">⭐⭐⭐⭐⭐</span>
-                  <span className="reviews-text">4.9 / 5.0 (Customer Rated)</span>
+                  <span className="reviews-text">4.9 / 5.0 (98 Reviews)</span>
                 </div>
 
                 <p className="detail-tagline-desc">{currentProduct.description}</p>
@@ -318,8 +378,8 @@ function App() {
                 </div>
 
                 <div className="detail-pricing-box">
-                  <span className="pricing-label">Availability:</span>
-                  <span className="pricing-value">Ready to Dispatch</span>
+                  <span className="pricing-label">Status:</span>
+                  <span className="pricing-value">In Stock (Organic Batch)</span>
                 </div>
 
                 {/* Direct Ordering CTAs */}
@@ -336,7 +396,7 @@ function App() {
                     Send Order via WhatsApp
                   </a>
                   <a href={`tel:${formattedPhone}`} className="btn-call-direct">
-                    📞 Call to Order: {contactNumber}
+                    📞 Call to Place Order: {contactNumber}
                   </a>
                 </div>
               </div>
@@ -438,7 +498,7 @@ function App() {
             
             <div className="hero-container">
               <span className="hero-tagline">100% Pure &amp; Aromatic</span>
-              <h1 className="hero-title">Bring the Authentic Taste of Deccan to Your Kitchen</h1>
+              <h1 className="hero-title">Bring the <span className="gradient-text">Authentic Taste</span> of Deccan to Your Kitchen</h1>
               <p className="hero-description">
                 Discover a premium range of handpicked, sun-dried, and traditionally ground spices. Direct from local farms with zero chemical additives or preservatives.
               </p>
@@ -468,6 +528,7 @@ function App() {
               </div>
               <div className="features-grid">
                 <div className="feature-card">
+                  <span className="feature-number">01</span>
                   <div className="feature-icon-wrapper">
                     <svg className="feature-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707m0-12.728l.707.707m12.728 12.728l.707-.707M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -477,6 +538,7 @@ function App() {
                   <p className="feature-desc">Sourced directly from local farmers practicing chemical-free farming to give you premium nature-fresh spices.</p>
                 </div>
                 <div className="feature-card">
+                  <span className="feature-number">02</span>
                   <div className="feature-icon-wrapper">
                     <svg className="feature-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
@@ -486,6 +548,7 @@ function App() {
                   <p className="feature-desc">Slow-ground using traditional techniques to ensure the temperature stays low, locking in essential aroma oils.</p>
                 </div>
                 <div className="feature-card">
+                  <span className="feature-number">03</span>
                   <div className="feature-icon-wrapper">
                     <svg className="feature-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
