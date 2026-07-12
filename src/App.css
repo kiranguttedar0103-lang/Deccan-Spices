@@ -628,7 +628,7 @@
   box-shadow: var(--shadow-lg);
   background-color: var(--gray-50);
   aspect-ratio: 4/3;
-  border: 1px solid var(--gray-100);
+  border: 1px solid var(--gray-200);
 }
 
 .detail-image {
@@ -638,8 +638,31 @@
   transition: transform 0.5s;
 }
 
-.detail-image-wrapper:hover .detail-image {
-  transform: scale(1.03);
+/* Zoom interactive overlay in product detail page */
+.image-zoom-overlay {
+  position: absolute;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.4);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  color: white;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+}
+
+.detail-image-wrapper:hover .image-zoom-overlay {
+  opacity: 1;
+}
+
+.image-zoom-overlay span {
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
 }
 
 .detail-badge {
@@ -654,6 +677,7 @@
   padding: 6px 14px;
   border-radius: var(--border-radius-full);
   box-shadow: var(--shadow-md);
+  z-index: 2;
 }
 
 .detail-info-section {
@@ -1088,5 +1112,119 @@
   .floating-whatsapp svg {
     width: 28px;
     height: 28px;
+  }
+}
+
+/* LIGHTBOX ZOOMABLE IMAGE MODAL */
+.lightbox-overlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(10, 11, 14, 0.95);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+  animation: fadeIn 0.3s ease forwards;
+}
+
+.lightbox-content {
+  position: relative;
+  max-width: 100%;
+  max-height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+
+/* Elegantly styled close overlay button */
+.lightbox-close-btn {
+  position: absolute;
+  top: -45px;
+  right: 0;
+  background: transparent;
+  border: none;
+  color: rgba(255, 255, 255, 0.75);
+  font-size: 40px;
+  line-height: 1;
+  font-weight: 300;
+  cursor: pointer;
+  transition: var(--transition-smooth);
+  padding: 5px;
+}
+
+.lightbox-close-btn:hover {
+  color: white;
+  transform: rotate(90deg) scale(1.1);
+}
+
+/* Container limits image bounds & configures overflow scrolling when zoomed */
+.lightbox-image-container {
+  max-width: 90vw;
+  max-height: 80vh;
+  overflow: auto;
+  border-radius: var(--border-radius-md);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.lightbox-image {
+  max-width: 100%;
+  max-height: 80vh;
+  object-fit: contain;
+  cursor: zoom-in;
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  display: block;
+}
+
+/* Zoomed styles */
+.lightbox-image.zoomed {
+  transform: scale(1.6);
+  cursor: zoom-out;
+}
+
+/* Caption bar below image */
+.lightbox-caption {
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 15px;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.lightbox-caption .divider {
+  color: rgba(255, 255, 255, 0.3);
+}
+
+.lightbox-caption .zoom-hint {
+  font-size: 13.5px;
+  color: var(--secondary);
+  font-weight: 600;
+}
+
+@media (max-width: 640px) {
+  .lightbox-overlay {
+    padding: 20px;
+  }
+  .lightbox-close-btn {
+    top: -45px;
+    right: 10px;
+  }
+  .lightbox-caption {
+    font-size: 13.5px;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .lightbox-caption .divider {
+    display: none;
   }
 }

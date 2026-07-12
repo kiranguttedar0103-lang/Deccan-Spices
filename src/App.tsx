@@ -134,6 +134,10 @@ function App() {
 
   const [selectedProductId, setSelectedProductId] = useState<string | null>(null);
   const [selectedWeight, setSelectedWeight] = useState<string>('');
+  
+  // Lightbox Modal States
+  const [isLightboxOpen, setIsLightboxOpen] = useState(false);
+  const [isImageZoomed, setIsImageZoomed] = useState(false);
 
   const currentProduct = products.find(p => p.id === selectedProductId) || null;
 
@@ -154,17 +158,32 @@ function App() {
     localStorage.setItem('theme', theme);
   }, [theme]);
 
+  // Disable scroll when lightbox is open
+  useEffect(() => {
+    if (isLightboxOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+      setIsImageZoomed(false);
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [isLightboxOpen]);
+
   const toggleTheme = () => {
     setTheme(prev => (prev === 'light' ? 'dark' : 'light'));
   };
 
   const navigateToProduct = (productId: string) => {
     setSelectedProductId(productId);
+    setIsLightboxOpen(false);
     window.scrollTo({ top: 0, behavior: 'instant' });
   };
 
   const navigateHome = () => {
     setSelectedProductId(null);
+    setIsLightboxOpen(false);
     window.scrollTo({ top: 0, behavior: 'instant' });
   };
 
@@ -251,9 +270,21 @@ function App() {
             {/* Main Details Panel */}
             <div className="detail-panel">
               <div className="detail-image-section">
-                <div className="detail-image-wrapper">
+                <div 
+                  className="detail-image-wrapper cursor-pointer" 
+                  onClick={() => setIsLightboxOpen(true)}
+                  title="Click to view full image"
+                >
                   <img src={currentProduct.image} alt={currentProduct.name} className="detail-image" />
                   {currentProduct.badge && <span className="detail-badge">{currentProduct.badge}</span>}
+                  
+                  {/* Click to Zoom indicator overlay */}
+                  <div className="image-zoom-overlay">
+                    <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v6m3-3H7" />
+                    </svg>
+                    <span>Click to Zoom</span>
+                  </div>
                 </div>
               </div>
               <div className="detail-info-section">
@@ -573,6 +604,38 @@ function App() {
           <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946C.06 5.348 5.397.01 12.008.01c3.202.001 6.212 1.246 8.477 3.514 2.266 2.268 3.507 5.28 3.505 8.484-.004 6.657-5.34 11.997-11.953 11.997-2.005-.001-3.973-.502-5.724-1.455L0 24zm6.59-4.846c1.6.95 3.188 1.449 4.825 1.451 5.436 0 9.86-4.37 9.864-9.799.002-2.63-1.023-5.101-2.885-6.963C16.59 1.981 14.117.957 11.99.957 6.558.957 2.13 5.327 2.128 10.756c-.001 1.681.453 3.32 1.316 4.795l-.997 3.64 3.74-.977zm12.115-4.523c-.3-.15-1.775-.875-2.049-.974-.275-.098-.475-.148-.674.15-.2.299-.775.974-.949 1.173-.175.199-.349.224-.649.075-.3-.15-1.265-.466-2.41-1.487-.893-.795-1.495-1.778-1.67-2.078-.175-.3-.018-.462.13-.61.135-.133.3-.349.45-.523.15-.174.2-.299.3-.499.1-.2.05-.375-.025-.524-.075-.15-.674-1.62-.924-2.22-.244-.589-.493-.51-.674-.519-.172-.008-.371-.01-.57-.01-.2 0-.524.074-.798.373-.275.3-1.047 1.022-1.047 2.492 0 1.47 1.071 2.888 1.22 3.088.15.199 2.107 3.218 5.104 4.512.713.308 1.27.492 1.704.63.717.228 1.369.196 1.885.119.574-.085 1.775-.726 2.024-1.397.25-.671.25-1.246.175-1.397-.075-.15-.275-.249-.575-.399z"/>
         </svg>
       </a>
+
+      {/* Lightbox / Zoomable Image Modal */}
+      {isLightboxOpen && currentProduct && (
+        <div className="lightbox-overlay" onClick={() => setIsLightboxOpen(false)}>
+          <div className="lightbox-content" onClick={(e) => e.stopPropagation()}>
+            {/* Close Button */}
+            <button 
+              className="lightbox-close-btn" 
+              onClick={() => setIsLightboxOpen(false)} 
+              aria-label="Close Lightbox"
+            >
+              &times;
+            </button>
+            {/* Zoomable Image Container */}
+            <div className="lightbox-image-container">
+              <img 
+                src={currentProduct.image} 
+                alt={currentProduct.name} 
+                className={`lightbox-image ${isImageZoomed ? 'zoomed' : ''}`} 
+                onClick={() => setIsImageZoomed(prev => !prev)}
+                title={isImageZoomed ? "Click to Zoom Out" : "Click to Zoom In"}
+              />
+            </div>
+            {/* Zoom Instruction Bar */}
+            <div className="lightbox-caption">
+              <span>{currentProduct.name}</span>
+              <span className="divider">|</span>
+              <span className="zoom-hint">{isImageZoomed ? "Click image to Zoom Out" : "Click image to Zoom In"}</span>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
