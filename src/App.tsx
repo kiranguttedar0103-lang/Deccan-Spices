@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, type PointerEvent as ReactPointerEvent } from 'react'
 import prd1 from './assets/ProductImages/Prd1.jpeg'
 import prd2 from './assets/ProductImages/Prd2.jpeg'
 import prd3 from './assets/ProductImages/Prd3.jpeg'
@@ -6,6 +6,7 @@ import prd4 from './assets/ProductImages/Prd4.jpeg'
 import prd5 from './assets/ProductImages/Prd5.jpeg'
 import prd6 from './assets/ProductImages/Prd6.jpeg'
 import prd7 from './assets/ProductImages/Prd7.jpeg'
+import landingVideo from './assets/ProductImages/landingvlog.mp4'
 import './App.css'
 
 interface Product {
@@ -22,6 +23,38 @@ interface Product {
   benefits: string[];
   usage: string;
 }
+
+const rotateProductImage = (event: ReactPointerEvent<HTMLDivElement>) => {
+  if (event.pointerType === 'touch' && event.buttons === 0) return;
+
+  if (event.buttons > 0) event.currentTarget.dataset.dragged = 'true';
+
+  const bounds = event.currentTarget.getBoundingClientRect();
+  const horizontal = (event.clientX - bounds.left) / bounds.width - 0.5;
+  const vertical = (event.clientY - bounds.top) / bounds.height - 0.5;
+
+  event.currentTarget.style.setProperty('--tilt-x', `${vertical * -14}deg`);
+  event.currentTarget.style.setProperty('--tilt-y', `${horizontal * 18}deg`);
+};
+
+const resetProductImageRotation = (event: ReactPointerEvent<HTMLDivElement>) => {
+  if (event.buttons > 0) return;
+
+  event.currentTarget.style.setProperty('--tilt-x', '0deg');
+  event.currentTarget.style.setProperty('--tilt-y', '0deg');
+};
+
+const startProductImageRotation = (event: ReactPointerEvent<HTMLDivElement>) => {
+  event.currentTarget.dataset.dragged = 'false';
+};
+
+const preventNavigationAfterImageRotation = (event: React.MouseEvent<HTMLDivElement>) => {
+  if (event.currentTarget.dataset.dragged === 'true') {
+    event.preventDefault();
+    event.stopPropagation();
+    delete event.currentTarget.dataset.dragged;
+  }
+};
 
 const products: Product[] = [
   {
@@ -134,6 +167,7 @@ function App() {
   });
 
   const [isThemeLoaded, setIsThemeLoaded] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   // Initialize selected product ID from URL query parameters (e.g., ?product=prd1)
   const [selectedProductId, setSelectedProductId] = useState<string | null>(() => {
@@ -256,8 +290,23 @@ function App() {
             <span className="logo-text">Deccan<span className="logo-sub">Spices</span></span>
           </button>
           <div className="header-actions-wrapper">
-            <nav>
-              <ul className="nav-menu">
+            <button
+              type="button"
+              className="mobile-menu-toggle"
+              aria-label={isMobileMenuOpen ? 'Close navigation menu' : 'Open navigation menu'}
+              aria-expanded={isMobileMenuOpen}
+              aria-controls="primary-navigation"
+              onClick={() => setIsMobileMenuOpen((isOpen) => !isOpen)}
+            >
+              <span />
+              <span />
+              <span />
+            </button>
+            <nav
+              className={`site-nav ${isMobileMenuOpen ? 'is-open' : ''}`}
+              onClick={() => setIsMobileMenuOpen(false)}
+            >
+              <ul className="nav-menu" id="primary-navigation">
                 {selectedProductId ? (
                   <li><button onClick={handleUiBack} className="nav-link-btn font-medium">← Back to Spices</button></li>
                 ) : (
@@ -319,6 +368,10 @@ function App() {
                 <div 
                   className="detail-image-wrapper cursor-pointer" 
                   onClick={() => setIsLightboxOpen(true)}
+                  onPointerMove={rotateProductImage}
+                  onPointerLeave={resetProductImageRotation}
+                  onPointerUp={resetProductImageRotation}
+                  onPointerCancel={resetProductImageRotation}
                   title="Click to zoom image"
                 >
                   <img src={currentProduct.image} alt={currentProduct.name} className="detail-image" />
@@ -453,9 +506,18 @@ function App() {
                     key={p.id}
                     onClick={() => navigateToProduct(p.id)}
                   >
-                    <div className="product-img-wrapper">
+                    <div
+                      className="product-img-wrapper"
+                      onPointerDown={startProductImageRotation}
+                      onPointerMove={rotateProductImage}
+                      onPointerLeave={resetProductImageRotation}
+                      onPointerUp={resetProductImageRotation}
+                      onPointerCancel={resetProductImageRotation}
+                      onClick={preventNavigationAfterImageRotation}
+                    >
                       <img src={p.image} alt={p.name} className="product-img" loading="lazy" />
                       {p.badge && <span className="product-badge">{p.badge}</span>}
+                      <span className="product-rotate-hint" aria-hidden="true">↔ Drag to rotate</span>
                     </div>
                     <div className="product-content">
                       <h3 className="product-title">{p.name}</h3>
@@ -498,6 +560,23 @@ function App() {
                   Contact Us
                 </a>
               </div>
+            </div>
+          </section>
+
+          {/* Brand Story Video */}
+          <section className="brand-video" aria-label="Deccan Spices story">
+            <div className="brand-video-container">
+              <video
+                className="brand-video-player"
+                controls
+                loop
+                playsInline
+                preload="metadata"
+                poster={prd1}
+              >
+                <source src={landingVideo} type="video/mp4" />
+                Your browser does not support embedded videos.
+              </video>
             </div>
           </section>
 
@@ -563,9 +642,18 @@ function App() {
                     key={product.id}
                     onClick={() => navigateToProduct(product.id)}
                   >
-                    <div className="product-img-wrapper">
+                    <div
+                      className="product-img-wrapper"
+                      onPointerDown={startProductImageRotation}
+                      onPointerMove={rotateProductImage}
+                      onPointerLeave={resetProductImageRotation}
+                      onPointerUp={resetProductImageRotation}
+                      onPointerCancel={resetProductImageRotation}
+                      onClick={preventNavigationAfterImageRotation}
+                    >
                       <img src={product.image} alt={product.name} className="product-img" loading="lazy" />
                       {product.badge && <span className="product-badge">{product.badge}</span>}
+                      <span className="product-rotate-hint" aria-hidden="true">↔ Drag to rotate</span>
                     </div>
                     <div className="product-content">
                       <h3 className="product-title">{product.name}</h3>
