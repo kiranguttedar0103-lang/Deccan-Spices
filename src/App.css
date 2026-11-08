@@ -752,6 +752,166 @@
   box-shadow: var(--shadow-sm);
 }
 
+.bulk-order-panel {
+  margin-top: 72px;
+  padding: clamp(24px, 5vw, 56px);
+  border: 1px solid var(--gray-200);
+  border-radius: var(--border-radius-lg);
+  background-color: var(--white);
+  box-shadow: var(--shadow-md);
+}
+
+.bulk-order-heading {
+  max-width: 720px;
+  margin: 0 auto 36px;
+  text-align: center;
+}
+
+.bulk-order-heading .section-tag {
+  margin-bottom: 12px;
+}
+
+.bulk-order-title {
+  margin-bottom: 12px;
+  font-size: clamp(30px, 5vw, 42px);
+}
+
+.bulk-order-description {
+  color: var(--gray-600);
+  font-size: 16px;
+}
+
+.bulk-order-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.bulk-order-item {
+  display: grid;
+  grid-template-columns: 56px minmax(0, 1fr) auto;
+  gap: 14px;
+  align-items: center;
+  min-width: 0;
+  padding: 12px;
+  border: 1px solid var(--gray-100);
+  border-radius: var(--border-radius-sm);
+  background-color: var(--light);
+}
+
+.bulk-order-thumbnail {
+  width: 56px;
+  height: 56px;
+  border-radius: 8px;
+  background-color: var(--white);
+  object-fit: contain;
+}
+
+.bulk-order-product-name {
+  min-width: 0;
+  color: var(--dark);
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+.bulk-order-product-name span {
+  display: block;
+  margin-top: 3px;
+  color: var(--gray-400);
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.bulk-order-quantity-label {
+  display: grid;
+  gap: 4px;
+  color: var(--gray-600);
+  font-size: 11px;
+  font-weight: 700;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.bulk-order-quantity-label input {
+  width: 76px;
+  min-height: 42px;
+  padding: 6px 8px;
+  border: 1px solid var(--gray-200);
+  border-radius: 8px;
+  background-color: var(--white);
+  color: var(--dark);
+  font: inherit;
+  font-size: 16px;
+  text-align: center;
+}
+
+.bulk-payment-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 24px;
+  margin: 30px 0 24px;
+  padding: 20px;
+  border: 1px solid var(--gray-200);
+  border-radius: var(--border-radius-sm);
+}
+
+.bulk-payment-options legend {
+  padding: 0 8px;
+  color: var(--dark);
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.bulk-payment-options label {
+  display: inline-flex;
+  gap: 9px;
+  align-items: center;
+  color: var(--gray-600);
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.bulk-payment-options input {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--primary);
+}
+
+.bulk-order-footer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.bulk-order-total {
+  margin: 0;
+  color: var(--gray-600);
+  font-size: 16px;
+  font-weight: 800;
+}
+
+.bulk-order-total.is-eligible {
+  color: #059669;
+}
+
+.bulk-order-submit {
+  min-height: 54px;
+  justify-content: center;
+  border: 0;
+  cursor: pointer;
+}
+
+.bulk-order-submit:disabled {
+  background: var(--gray-200);
+  box-shadow: none;
+  color: var(--gray-600) !important;
+  cursor: not-allowed;
+  transform: none;
+}
+
 /* PRODUCT DETAIL VIEW SCREEN */
 .product-detail-view {
   padding: 160px 24px 100px;
@@ -1165,7 +1325,7 @@
 /* Contact & CTA Section */
 .contact-cta {
   padding: 140px 24px;
-  background: linear-gradient(rgba(18, 15, 13, 0.94), rgba(18, 15, 13, 0.94)), url('./assets/ProductImages/Prd1.jpeg') no-repeat center center / cover;
+  background: linear-gradient(rgba(18, 15, 13, 0.94), rgba(18, 15, 13, 0.94)), url('./assets/ProductImages/deccan-spices-red-chilli-powder-100g-packaging.webp') no-repeat center center / cover;
   color: white;
   text-align: center;
   position: relative;
@@ -1672,6 +1832,10 @@
     gap: 22px;
   }
 
+  .bulk-order-list {
+    grid-template-columns: 1fr;
+  }
+
   .product-content {
     padding: 22px;
   }
@@ -1753,6 +1917,52 @@
   .products-grid {
     grid-template-columns: 1fr;
     gap: 18px;
+  }
+
+  .bulk-order-panel {
+    margin-top: 48px;
+    padding: 24px 18px;
+    border-radius: var(--border-radius-md);
+  }
+
+  .bulk-order-heading {
+    margin-bottom: 26px;
+  }
+
+  .bulk-order-item {
+    grid-template-columns: 48px minmax(0, 1fr) auto;
+    gap: 10px;
+    padding: 10px;
+  }
+
+  .bulk-order-thumbnail {
+    width: 48px;
+    height: 48px;
+  }
+
+  .bulk-order-product-name {
+    font-size: 13px;
+  }
+
+  .bulk-order-quantity-label input {
+    width: 66px;
+  }
+
+  .bulk-payment-options {
+    flex-direction: column;
+    gap: 14px;
+    padding: 16px;
+  }
+
+  .bulk-order-footer {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .bulk-order-submit {
+    width: 100%;
+    padding: 16px;
+    font-size: 13px;
   }
 
   .feature-card {
