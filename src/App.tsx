@@ -15,10 +15,20 @@ interface Product {
   image: string;
   imageAlt: string;
   description: string;
+  flavor: string;
+  bestFor: string;
   netWeight: string;
   energyKcal: number;
   barcode: string;
   fssaiLicense: string;
+}
+
+interface RecipeIdea {
+  title: string;
+  productId: string;
+  spice: string;
+  description: string;
+  method: string;
 }
 
 const rotateProductImage = (event: ReactPointerEvent<HTMLDivElement>) => {
@@ -59,7 +69,9 @@ const products: Product[] = [
     name: 'Deccan Spices Red Chilli Powder',
     image: redChilliImage,
     imageAlt: 'Deccan Spices Red Chilli Powder 100g Box Packaging Layout',
-    description: 'Deccan Spices Red Chilli Powder in a 100g box.',
+    description: 'A pantry staple for adding chilli heat and color to curries, marinades, and everyday cooking.',
+    flavor: 'Direct chilli heat with a vivid red color.',
+    bestFor: 'Curries, marinades, and stir-fried vegetables.',
     netWeight: '100g',
     energyKcal: 282,
     barcode: '8906192430071',
@@ -70,7 +82,9 @@ const products: Product[] = [
     name: 'Deccan Spices Chicken Masala',
     image: chickenMasalaImage,
     imageAlt: 'Deccan Spices Chicken Masala 100g Box Packaging Layout',
-    description: 'Deccan Spices Chicken Masala in a 100g box.',
+    description: 'A ready-to-use spice blend for a warmly seasoned chicken curry.',
+    flavor: 'Savory and warming, with layered spice notes.',
+    bestFor: 'Chicken curry, roasted chicken, and marinades.',
     netWeight: '100g',
     energyKcal: 321,
     barcode: '8906192430101',
@@ -81,7 +95,9 @@ const products: Product[] = [
     name: 'Deccan Spices Mutton Masala',
     image: muttonMasalaImage,
     imageAlt: 'Deccan Spices Mutton Masala 100g Box Packaging Layout',
-    description: 'Deccan Spices Mutton Masala in a 100g box.',
+    description: 'A robust spice blend made for slow-cooked meat curries.',
+    flavor: 'Deep, savory warmth for long-simmered dishes.',
+    bestFor: 'Mutton curry, lamb stew, and meat marinades.',
     netWeight: '100g',
     energyKcal: 317,
     barcode: '8906192430118',
@@ -92,7 +108,9 @@ const products: Product[] = [
     name: 'Deccan Spices Coriander Powder',
     image: corianderImage,
     imageAlt: 'Deccan Spices Coriander Powder 100g Box Packaging Layout',
-    description: 'Deccan Spices Coriander Powder in a 100g box.',
+    description: 'A versatile ground spice for building a fragrant base in everyday meals.',
+    flavor: 'Mild, earthy, and gently citrus-like.',
+    bestFor: 'Vegetable curries, dals, and spice blends.',
     netWeight: '100g',
     energyKcal: 298,
     barcode: '8906192430095',
@@ -103,7 +121,9 @@ const products: Product[] = [
     name: 'Deccan Spices Turmeric Powder',
     image: turmericImage,
     imageAlt: 'Deccan Spices Turmeric Powder 100g Box Packaging Layout',
-    description: 'Deccan Spices Turmeric Powder in a 100g box.',
+    description: 'A bright, earthy kitchen staple for dals, vegetables, and curry bases.',
+    flavor: 'Earthy and gently bitter; use a little at a time.',
+    bestFor: 'Dals, rice, vegetable dishes, and marinades.',
     netWeight: '100g',
     energyKcal: 354,
     barcode: '8906192430088',
@@ -114,7 +134,9 @@ const products: Product[] = [
     name: 'Deccan Spices Super Garam Masala',
     image: superGaramMasalaImage,
     imageAlt: 'Deccan Spices Super Garam Masala 100g Box Packaging Layout',
-    description: 'Deccan Spices Super Garam Masala in a 100g box.',
+    description: 'A fragrant finishing blend for adding warmth near the end of cooking.',
+    flavor: 'Aromatic, sweet-warm, and savory.',
+    bestFor: 'Curries, lentils, and roasted vegetables.',
     netWeight: '100g',
     energyKcal: 320,
     barcode: '8906192430132',
@@ -125,7 +147,9 @@ const products: Product[] = [
     name: 'Deccan Spices Sambar Masala',
     image: sambarMasalaImage,
     imageAlt: 'Deccan Spices Sambar Masala 100g Box Packaging Layout',
-    description: 'Deccan Spices Sambar Masala in a 100g box.',
+    description: 'A convenient blend for lentil-and-vegetable sambar and other savory dishes.',
+    flavor: 'Savory, fragrant, and gently warming.',
+    bestFor: 'Sambar, vegetable stews, and lentil dishes.',
     netWeight: '100g',
     energyKcal: 328,
     barcode: '8906192430149',
@@ -133,10 +157,63 @@ const products: Product[] = [
   }
 ];
 
+const recipeIdeas: RecipeIdea[] = [
+  {
+    title: 'Weeknight chicken curry',
+    productId: 'prd2',
+    spice: 'Chicken Masala',
+    description: 'A simple, comforting curry for a family meal.',
+    method: 'Soften onion, add ginger and garlic, then chicken and tomatoes. Season with chicken masala and simmer until the chicken is fully cooked.'
+  },
+  {
+    title: 'Slow-cooked mutton curry',
+    productId: 'prd3',
+    spice: 'Mutton Masala',
+    description: 'Let a warming spice blend build flavor as the curry cooks.',
+    method: 'Brown onion, add mutton and mutton masala, then stir in water and cook until tender. Adjust salt and heat to taste.'
+  },
+  {
+    title: 'Everyday vegetable sambar',
+    productId: 'prd7',
+    spice: 'Sambar Masala',
+    description: 'Pair lentils, vegetables, and tamarind for a hearty bowl.',
+    method: 'Cook toor dal until soft. Simmer with vegetables, tamarind, and sambar masala until tender; finish with a tempering if you like.'
+  },
+  {
+    title: 'Golden turmeric dal',
+    productId: 'prd5',
+    spice: 'Turmeric Powder',
+    description: 'A simple dal with a warm, earthy base.',
+    method: 'Cook lentils with a pinch of turmeric. Finish with a tempering of cumin, garlic, and chilli, then season to taste.'
+  },
+  {
+    title: 'Everyday curry base',
+    productId: 'prd4',
+    spice: 'Coriander Powder',
+    description: 'Use ground coriander to round out a quick vegetable curry.',
+    method: 'Cook onion, garlic, and tomato until soft. Stir in coriander powder, add vegetables and a splash of water, then simmer until tender.'
+  },
+  {
+    title: 'Warm finishing touch',
+    productId: 'prd6',
+    spice: 'Super Garam Masala',
+    description: 'Bring a fragrant finish to a curry, dal, or roasted vegetables.',
+    method: 'Add a small pinch near the end of cooking, taste, and adjust. Start with less and add more to suit your preference.'
+  },
+  {
+    title: 'Chilli-spiced vegetables',
+    productId: 'prd1',
+    spice: 'Red Chilli Powder',
+    description: 'Adjust the heat in a quick vegetable side dish.',
+    method: 'Bloom a pinch of chilli powder in warm oil with your other spices, add vegetables, and cook until tender. Increase gradually to taste.'
+  }
+];
+
 function App() {
   const contactNumber = '7349391969';
   const formattedPhone = '+917349391969';
-  const globalWhatsappMessage = encodeURIComponent('Hello Deccan Spices! I visited your website and would like to learn more or place an order.');
+  const globalWhatsappMessage = encodeURIComponent('Hello Deccan Spices! Please share current prices, availability, and delivery options.');
+  const feedbackWhatsappMessage = encodeURIComponent('Hello Deccan Spices! I would like to share feedback about a product or send a photo of a dish I made.');
   const minimumBulkQuantity = 20;
 
   // Theme state
@@ -250,7 +327,7 @@ function App() {
 
   const getProductWhatsappLink = (productName: string, weight?: string) => {
     const weightText = weight ? ` (${weight})` : '';
-    const msg = encodeURIComponent(`Hello Deccan Spices! I would like to order: "${productName}"${weightText}. Please share the pricing details and shipping instructions.`);
+    const msg = encodeURIComponent(`Hello Deccan Spices! I am interested in "${productName}"${weightText}. Please confirm today's price, availability, delivery options, and charges.`);
     return `https://wa.me/91${contactNumber}?text=${msg}`;
   };
 
@@ -294,8 +371,9 @@ function App() {
                 ) : (
                   <>
                     <li><a href="#home" className="nav-link">Home</a></li>
-                    <li><a href="#why-us" className="nav-link">Our Quality</a></li>
+                    <li><a href="#why-us" className="nav-link">Choose a spice</a></li>
                     <li><a href="#products" className="nav-link">Our Spices</a></li>
+                    <li><a href="#recipes" className="nav-link">Recipes</a></li>
                     <li><a href="#contact" className="nav-link">Contact</a></li>
                   </>
                 )}
@@ -383,7 +461,7 @@ function App() {
                     <svg viewBox="0 0 24 24" fill="currentColor">
                       <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946C.06 5.348 5.397.01 12.008.01c3.202.001 6.212 1.246 8.477 3.514 2.266 2.268 3.507 5.28 3.505 8.484-.004 6.657-5.34 11.997-11.953 11.997-2.005-.001-3.973-.502-5.724-1.455L0 24zm6.59-4.846c1.6.95 3.188 1.449 4.825 1.451 5.436 0 9.86-4.37 9.864-9.799.002-2.63-1.023-5.101-2.885-6.963C16.59 1.981 14.117.957 11.99.957 6.558.957 2.13 5.327 2.128 10.756c-.001 1.681.453 3.32 1.316 4.795l-.997 3.64 3.74-.977zm12.115-4.523c-.3-.15-1.775-.875-2.049-.974-.275-.098-.475-.148-.674.15-.2.299-.775.974-.949 1.173-.175.199-.349.224-.649.075-.3-.15-1.265-.466-2.41-1.487-.893-.795-1.495-1.778-1.67-2.078-.175-.3-.018-.462.13-.61.135-.133.3-.349.45-.523.15-.174.2-.299.3-.499.1-.2.05-.375-.025-.524-.075-.15-.674-1.62-.924-2.22-.244-.589-.493-.51-.674-.519-.172-.008-.371-.01-.57-.01-.2 0-.524.074-.798.373-.275.3-1.047 1.022-1.047 2.492 0 1.47 1.071 2.888 1.22 3.088.15.199 2.107 3.218 5.104 4.512.713.308 1.27.492 1.704.63.717.228 1.369.196 1.885.119.574-.085 1.775-.726 2.024-1.397.25-.671.25-1.246.175-1.397-.075-.15-.275-.249-.575-.399z"/>
                     </svg>
-                    Send Order via WhatsApp
+                    Ask price & availability
                   </a>
                   <a href={`tel:${formattedPhone}`} className="btn-call-direct">
                     📞 Call to Place Order: {contactNumber}
@@ -394,6 +472,12 @@ function App() {
 
             {/* Product specifications */}
             <div className="product-tabbed-info">
+              <div className="info-column product-use-info">
+                <h3 className="sub-section-title">Taste &amp; ways to use</h3>
+                <p><strong>Flavor:</strong> {currentProduct.flavor}</p>
+                <p><strong>Goes well in:</strong> {currentProduct.bestFor}</p>
+                <p className="price-confirmation-note">Only the 100g pack is listed here. Confirm current price, availability, and delivery charges with us on WhatsApp before ordering.</p>
+              </div>
               <div className="info-column">
                 <h3 className="sub-section-title">Pack Details</h3>
                 <table className="specs-table">
@@ -458,7 +542,7 @@ function App() {
                       <p className="product-desc line-clamp">{p.description}</p>
                       <div className="product-meta">
                         <span className="product-weight">Weight: {p.netWeight}</span>
-                        <span className="product-price">{p.energyKcal} kcal / 100g</span>
+                        <span className="product-price">Price on WhatsApp</span>
                       </div>
                       <button className="btn-product-view-details">
                         View Product Details
@@ -476,12 +560,12 @@ function App() {
           {/* Hero Section */}
           <section className="hero">
             <div className="hero-container">
-              <span className="hero-tagline">100% Pure &amp; Aromatic</span>
+              <span className="hero-tagline">A taste of the Deccan</span>
               <h1 className="hero-title">
-                Bring the <span className="gradient-text italic-serif">Aromatic Heritage</span> of Deccan to Your Kitchen
+                Bring a little <span className="gradient-text italic-serif">Deccan warmth</span> to your kitchen
               </h1>
               <p className="hero-description">
-                Discover a premium range of handpicked, sun-dried, and traditionally ground spices. Direct from local farms with zero chemical additives or preservatives.
+                Explore seven spice powders and masalas in 100g packs. Find a blend for your next meal, then message us to confirm today’s price, availability, and delivery options.
               </p>
               <div className="hero-actions">
                 <a href="#products" className="btn-primary">Explore Products</a>
@@ -518,10 +602,10 @@ function App() {
           <section className="features" id="why-us">
             <div className="section-container">
               <div className="section-header">
-                <span className="section-tag">Our Guarantee</span>
-                <h2 className="section-title">Why Deccan Spices Stands Out</h2>
+                <span className="section-tag">Made for everyday cooking</span>
+                <h2 className="section-title">Find a spice for the way you cook</h2>
                 <p className="section-description">
-                  We focus on traditional values, ensuring that our spices retain their natural essential oils, distinct color, and original taste.
+                  Explore straightforward flavor notes, suggested uses, and the product information shown on each 100g pack.
                 </p>
               </div>
               <div className="features-grid">
@@ -532,8 +616,8 @@ function App() {
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707m0-12.728l.707.707m12.728 12.728l.707-.707M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
                   </div>
-                  <h3 className="feature-title">100% Organic Sourcing</h3>
-                  <p className="feature-desc">Sourced directly from local farmers practicing chemical-free farming to give you premium nature-fresh spices.</p>
+                  <h3 className="feature-title">Choose by dish</h3>
+                  <p className="feature-desc">Browse dedicated blends for chicken curry, mutton curry, and sambar—or everyday powders for your own recipes.</p>
                 </div>
                 <div className="feature-card">
                   <span className="feature-number">02</span>
@@ -542,8 +626,8 @@ function App() {
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
                     </svg>
                   </div>
-                  <h3 className="feature-title">Traditionally Stone Ground</h3>
-                  <p className="feature-desc">Slow-ground using traditional techniques to ensure the temperature stays low, locking in essential aroma oils.</p>
+                  <h3 className="feature-title">Know what’s in the pack</h3>
+                  <p className="feature-desc">Open each product page for its listed ingredients, nutrition, barcode, and pack details.</p>
                 </div>
                 <div className="feature-card">
                   <span className="feature-number">03</span>
@@ -552,8 +636,8 @@ function App() {
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
                     </svg>
                   </div>
-                  <h3 className="feature-title">No Preservatives</h3>
-                  <p className="feature-desc">Absolutely zero artificial food colors, msg, anti-caking agents, or chemical preservatives. Pure spice from farm to kitchen.</p>
+                  <h3 className="feature-title">Ask us before you order</h3>
+                  <p className="feature-desc">We’ll confirm current price, stock, and delivery options directly with you on WhatsApp.</p>
                 </div>
               </div>
             </div>
@@ -563,10 +647,10 @@ function App() {
           <section className="products" id="products">
             <div className="section-container">
               <div className="section-header">
-                <span className="section-tag">Authentic Selection</span>
+                <span className="section-tag">The spice collection</span>
                 <h2 className="section-title">Our Premium Spice Collection</h2>
                 <p className="section-description">
-                  Handcrafted in small batches to preserve ultimate freshness. Click any spice to view its detailed specifications and select packaging.
+                  Browse the 100g packs, compare their flavor and uses, and open a product for its full label details. Message us for current pricing and delivery information.
                 </p>
               </div>
               <div className="products-grid">
@@ -593,7 +677,7 @@ function App() {
                       <p className="product-desc line-clamp">{product.description}</p>
                       <div className="product-meta">
                         <span className="product-weight">Weight: {product.netWeight}</span>
-                        <span className="product-price">{product.energyKcal} kcal / 100g</span>
+                        <span className="product-price">Price on WhatsApp</span>
                       </div>
                       <button className="btn-product-view-details">
                         View Product Details
@@ -689,12 +773,56 @@ function App() {
             </div>
           </section>
 
+          <section className="recipes-section" id="recipes">
+            <div className="section-container">
+              <div className="section-header">
+                <span className="section-tag">From our spice shelf</span>
+                <h2 className="section-title">What are you cooking?</h2>
+                <p className="section-description">
+                  A few flexible starting points. Adjust spices, salt, and heat to your taste, and follow safe cooking guidance for meat.
+                </p>
+              </div>
+              <div className="recipe-grid">
+                {recipeIdeas.map((recipe) => (
+                  <article className="recipe-card" key={recipe.title}>
+                    <span className="recipe-spice">{recipe.spice}</span>
+                    <h3>{recipe.title}</h3>
+                    <p className="recipe-intro">{recipe.description}</p>
+                    <p>{recipe.method}</p>
+                    <button
+                      type="button"
+                      className="recipe-product-link"
+                      onClick={() => navigateToProduct(recipe.productId)}
+                    >
+                      Explore {recipe.spice}
+                    </button>
+                  </article>
+                ))}
+              </div>
+              <div className="customer-feedback-card">
+                <div>
+                  <span className="section-tag">Cooked with Deccan?</span>
+                  <h3>Share your dish or feedback</h3>
+                  <p>Send us an honest note or a photo on WhatsApp. With your permission, we may feature it on our site.</p>
+                </div>
+                <a
+                  href={`https://wa.me/91${contactNumber}?text=${feedbackWhatsappMessage}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="btn-primary"
+                >
+                  Share feedback
+                </a>
+              </div>
+            </div>
+          </section>
+
           {/* Contact & CTA Section */}
           <section className="contact-cta" id="contact">
             <div className="cta-container">
-              <h2 className="cta-title">Order Fresh Spices Today</h2>
+              <h2 className="cta-title">Ready to choose your spices?</h2>
               <p className="cta-desc">
-                We deliver pure, premium quality spices directly to your doorstep. Have questions, bulk orders, or custom requirement inquiries? Reach out to us directly!
+                Message us to confirm current prices, stock, delivery availability, and charges before placing an order.
               </p>
               <div className="cta-links">
                 <a href={`tel:${formattedPhone}`} className="cta-phone">
@@ -726,7 +854,7 @@ function App() {
               Deccan<span>Spices</span>
             </h3>
             <p className="footer-tagline">
-              Bringing authentic taste, traditional quality, and pure health from the heart of the Deccan plateau directly to your home.
+              Explore everyday spice powders and blends, with product details and recipe ideas to help you choose what to cook next.
             </p>
           </div>
           <div className="footer-contact">
@@ -744,7 +872,7 @@ function App() {
         </div>
         <div className="footer-bottom">
           <p>&copy; {new Date().getFullYear()} Deccan Spices. All Rights Reserved.</p>
-          <p>Handcrafted Pure Indian Spices</p>
+          <p>Spice ideas for everyday cooking</p>
         </div>
       </footer>
 
