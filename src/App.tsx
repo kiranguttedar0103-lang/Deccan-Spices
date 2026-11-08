@@ -1,11 +1,11 @@
 import { useState, useEffect, type PointerEvent as ReactPointerEvent } from 'react'
-import prd1 from './assets/ProductImages/Prd1.jpeg'
-import prd2 from './assets/ProductImages/Prd2.jpeg'
-import prd3 from './assets/ProductImages/Prd3.jpeg'
-import prd4 from './assets/ProductImages/Prd4.jpeg'
-import prd5 from './assets/ProductImages/Prd5.jpeg'
-import prd6 from './assets/ProductImages/Prd6.jpeg'
-import prd7 from './assets/ProductImages/Prd7.jpeg'
+import redChilliImage from './assets/ProductImages/deccan-spices-red-chilli-powder-100g-packaging.webp'
+import chickenMasalaImage from './assets/ProductImages/deccan-spices-chicken-masala-100g-packaging.webp'
+import muttonMasalaImage from './assets/ProductImages/deccan-spices-mutton-masala-100g-packaging.webp'
+import corianderImage from './assets/ProductImages/deccan-spices-coriander-powder-100g-packaging.webp'
+import turmericImage from './assets/ProductImages/deccan-spices-turmeric-powder-100g-packaging.webp'
+import superGaramMasalaImage from './assets/ProductImages/deccan-spices-super-garam-masala-100g-packaging.webp'
+import sambarMasalaImage from './assets/ProductImages/deccan-spices-sambar-masala-100g-packaging.webp'
 import landingVideo from './assets/ProductImages/landingvlog.mp4'
 import './App.css'
 
@@ -13,15 +13,12 @@ interface Product {
   id: string;
   name: string;
   image: string;
-  badge?: string;
+  imageAlt: string;
   description: string;
-  weight: string;
-  price: string;
-  ingredients: string;
-  origin: string;
-  shelfLife: string;
-  benefits: string[];
-  usage: string;
+  netWeight: string;
+  energyKcal: number;
+  barcode: string;
+  fssaiLicense: string;
 }
 
 const rotateProductImage = (event: ReactPointerEvent<HTMLDivElement>) => {
@@ -59,98 +56,80 @@ const preventNavigationAfterImageRotation = (event: React.MouseEvent<HTMLDivElem
 const products: Product[] = [
   {
     id: 'prd1',
-    name: 'Premium Guntur Chilli Powder',
-    image: prd1,
-    badge: 'Best Seller',
-    description: 'Sourced from the heart of Guntur, our sun-dried red chillies are ground to perfection, offering a rich crimson color and an intense authentic heat.',
-    weight: '250g / 500g',
-    price: 'Pure & Organic',
-    ingredients: '100% Pure sun-dried Guntur Red Chillies',
-    origin: 'Guntur, Andhra Pradesh, India',
-    shelfLife: '12 Months',
-    benefits: ['Rich in Vitamin C & antioxidants', 'Boosts metabolism and aids weight loss', 'Acts as a natural pain reliever'],
-    usage: 'Perfect for traditional Indian curries, spicy gravies, tandoori marinades, and stir-fries.'
+    name: 'Deccan Spices Red Chilli Powder',
+    image: redChilliImage,
+    imageAlt: 'Deccan Spices Red Chilli Powder 100g Box Packaging Layout',
+    description: 'Deccan Spices Red Chilli Powder in a 100g box.',
+    netWeight: '100g',
+    energyKcal: 282,
+    barcode: '8906192430071',
+    fssaiLicense: '21226175000227'
   },
   {
     id: 'prd2',
-    name: 'Royal Salem Turmeric Powder',
-    image: prd2,
-    badge: 'High Curcumin',
-    description: 'Traditionally ground Salem turmeric with high curcumin content. Adds a vibrant golden hue and rich immunity-boosting properties to your meals.',
-    weight: '200g / 500g',
-    price: '100% Pure',
-    ingredients: '100% Organic Salem Turmeric Rhizomes',
-    origin: 'Salem, Tamil Nadu, India',
-    shelfLife: '18 Months',
-    benefits: ['High Curcumin content (5%+)', 'Powerful anti-inflammatory properties', 'Improves digestion and boosts immunity'],
-    usage: 'Ideal for everyday cooking, golden turmeric milk, herbal teas, and wellness remedies.'
+    name: 'Deccan Spices Chicken Masala',
+    image: chickenMasalaImage,
+    imageAlt: 'Deccan Spices Chicken Masala 100g Box Packaging Layout',
+    description: 'Deccan Spices Chicken Masala in a 100g box.',
+    netWeight: '100g',
+    energyKcal: 321,
+    barcode: '8906192430101',
+    fssaiLicense: '21226175000227'
   },
   {
     id: 'prd3',
-    name: 'Heritage Garam Masala Blend',
-    image: prd3,
-    badge: 'Traditional Recipe',
-    description: 'A royal blend of 12 hand-roasted spices crafted from a legacy recipe, adding robust warmth, aroma, and rich flavor to any vegetarian or meat dish.',
-    weight: '100g / 250g',
-    price: 'Aromatic',
-    ingredients: 'Cinnamon, cardamom, cloves, cumin, coriander, black pepper, nutmeg, star anise, fennel, bay leaf',
-    origin: 'Deccan Region, India',
-    shelfLife: '12 Months',
-    benefits: ['Improves digestion and gut health', 'Combats bad breath and improves oral hygiene', 'Rich in powerful antioxidants'],
-    usage: 'Sprinkle a small pinch at the final stage of cooking curries, biryanis, and gravies to lock in maximum aroma.'
+    name: 'Deccan Spices Mutton Masala',
+    image: muttonMasalaImage,
+    imageAlt: 'Deccan Spices Mutton Masala 100g Box Packaging Layout',
+    description: 'Deccan Spices Mutton Masala in a 100g box.',
+    netWeight: '100g',
+    energyKcal: 317,
+    barcode: '8906192430118',
+    fssaiLicense: '21226175000227'
   },
   {
     id: 'prd4',
-    name: 'Bold Malabar Pepper Powder',
-    image: prd4,
-    description: 'Selected black peppercorns from the Malabar coast, slow-crushed to preserve the essential volatile oils and deliver a sharp, lingering bite.',
-    weight: '100g / 200g',
-    price: 'Freshly Ground',
-    ingredients: '100% Whole Malabar Black Peppercorns',
-    origin: 'Malabar Coast, Kerala, India',
-    shelfLife: '12 Months',
-    benefits: ['Enhances nutrient absorption in the body', 'Promotes gut health and relieves flatulence', 'Natural anti-bacterial qualities'],
-    usage: 'Adds a warm, sharp kick to eggs, salads, clear soups, pastas, grilled meats, and stir-fried vegetables.'
+    name: 'Deccan Spices Coriander Powder',
+    image: corianderImage,
+    imageAlt: 'Deccan Spices Coriander Powder 100g Box Packaging Layout',
+    description: 'Deccan Spices Coriander Powder in a 100g box.',
+    netWeight: '100g',
+    energyKcal: 298,
+    barcode: '8906192430095',
+    fssaiLicense: '21226175000227'
   },
   {
     id: 'prd5',
-    name: 'Mild Kashmiri Chilli Powder',
-    image: prd5,
-    badge: 'Popular',
-    description: 'Prized for its brilliant red hue and mild warmth, this premium spice gives your curries a stunning visual appeal without overpowering heat.',
-    weight: '250g / 500g',
-    price: 'Premium Grade',
-    ingredients: '100% Premium Kashmiri Red Chillies',
-    origin: 'Kashmir Valley, India',
-    shelfLife: '12 Months',
-    benefits: ['Rich in vitamin A and beta-carotenes', 'Extremely low heat index, gentle on stomach', 'Supports healthy skin and eyes'],
-    usage: 'Perfect for achieving that signature deep red color in Butter Chicken, Paneer Tikka, Rogan Josh, and dry rubs.'
+    name: 'Deccan Spices Turmeric Powder',
+    image: turmericImage,
+    imageAlt: 'Deccan Spices Turmeric Powder 100g Box Packaging Layout',
+    description: 'Deccan Spices Turmeric Powder in a 100g box.',
+    netWeight: '100g',
+    energyKcal: 354,
+    barcode: '8906192430088',
+    fssaiLicense: '21226175000227'
   },
   {
     id: 'prd6',
-    name: 'Fragrant Coriander Powder',
-    image: prd6,
-    description: 'Made from the finest coriander seeds, slow-roasted to bring out their sweet, citrusy aroma and earthy undertones.',
-    weight: '250g / 500g',
-    price: 'Rich Aroma',
-    ingredients: '100% Roasted Coriander (Dhania) Seeds',
-    origin: 'Madhya Pradesh, India',
-    shelfLife: '12 Months',
-    benefits: ['Helps reduce bad cholesterol levels', 'Assists in regulating blood sugar levels', 'Aids the overall digestive process'],
-    usage: 'Forms the foundational base spice for sambar, rasam, curries, stews, and spice pastes.'
+    name: 'Deccan Spices Super Garam Masala',
+    image: superGaramMasalaImage,
+    imageAlt: 'Deccan Spices Super Garam Masala 100g Box Packaging Layout',
+    description: 'Deccan Spices Super Garam Masala in a 100g box.',
+    netWeight: '100g',
+    energyKcal: 320,
+    barcode: '8906192430132',
+    fssaiLicense: '21226175000227'
   },
   {
     id: 'prd7',
-    name: 'Royal Cumin Seeds (Jeera)',
-    image: prd7,
-    description: 'Crispy, premium whole cumin seeds packed with high essential oil content, releasing a warm and robust aroma when roasted.',
-    weight: '100g / 250g',
-    price: 'Handselected',
-    ingredients: '100% Whole Cumin (Jeera) Seeds',
-    origin: 'Gujarat, India',
-    shelfLife: '24 Months',
-    benefits: ['Aids in secretion of digestive enzymes', 'Excellent source of dietary iron', 'Combats internal inflammation'],
-    usage: 'Perfect for tempering (tadka) in hot oil or ghee at the beginning of cooking dals, rice, and vegetable curries.'
+    name: 'Deccan Spices Sambar Masala',
+    image: sambarMasalaImage,
+    imageAlt: 'Deccan Spices Sambar Masala 100g Box Packaging Layout',
+    description: 'Deccan Spices Sambar Masala in a 100g box.',
+    netWeight: '100g',
+    energyKcal: 328,
+    barcode: '8906192430149',
+    fssaiLicense: '21226175000227'
   }
 ];
 
@@ -158,6 +137,7 @@ function App() {
   const contactNumber = '7349391969';
   const formattedPhone = '+917349391969';
   const globalWhatsappMessage = encodeURIComponent('Hello Deccan Spices! I visited your website and would like to learn more or place an order.');
+  const minimumBulkQuantity = 20;
 
   // Theme state
   const [theme, setTheme] = useState<'light' | 'dark'>(() => {
@@ -168,6 +148,8 @@ function App() {
 
   const [isThemeLoaded, setIsThemeLoaded] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [bulkQuantities, setBulkQuantities] = useState<Record<string, number>>({});
+  const [bulkPaymentMethod, setBulkPaymentMethod] = useState<'upi' | 'cod'>('upi');
 
   // Initialize selected product ID from URL query parameters (e.g., ?product=prd1)
   const [selectedProductId, setSelectedProductId] = useState<string | null>(() => {
@@ -175,21 +157,21 @@ function App() {
     return params.get('product');
   });
 
-  const [selectedWeight, setSelectedWeight] = useState<string>('');
-  
   // Lightbox Modal States
   const [isLightboxOpen, setIsLightboxOpen] = useState(false);
   const [isImageZoomed, setIsImageZoomed] = useState(false);
 
   const currentProduct = products.find(p => p.id === selectedProductId) || null;
-
-  // Sync selectedWeight when the product changes
-  useEffect(() => {
-    if (currentProduct) {
-      const weights = currentProduct.weight.split('/');
-      setSelectedWeight(weights[0].trim());
-    }
-  }, [selectedProductId, currentProduct]);
+  const bulkOrderQuantity = Object.values(bulkQuantities).reduce((total, quantity) => total + quantity, 0);
+  const bulkOrderItems = products.filter(product => (bulkQuantities[product.id] ?? 0) > 0);
+  const bulkOrderMessage = [
+    'Hello Deccan Spices! I would like to place a bulk order:',
+    ...bulkOrderItems.map(product => `- ${product.name} (${product.netWeight}) x ${bulkQuantities[product.id]} packs`),
+    `Total: ${bulkOrderQuantity} packs`,
+    `Preferred payment: ${bulkPaymentMethod === 'upi' ? 'UPI (please share payment details on WhatsApp)' : 'Cash on Delivery (please confirm availability)'}`,
+    'Please confirm bulk pricing, shipping, and payment details.'
+  ].join('\n');
+  const bulkOrderUrl = `https://wa.me/91${contactNumber}?text=${encodeURIComponent(bulkOrderMessage)}`;
 
   // Smooth theme loading
   useEffect(() => {
@@ -374,8 +356,7 @@ function App() {
                   onPointerCancel={resetProductImageRotation}
                   title="Click to zoom image"
                 >
-                  <img src={currentProduct.image} alt={currentProduct.name} className="detail-image" />
-                  {currentProduct.badge && <span className="detail-badge">{currentProduct.badge}</span>}
+                  <img src={currentProduct.image} alt={currentProduct.imageAlt} className="detail-image" />
                   
                   {/* Zoom indicator */}
                   <div className="image-zoom-overlay">
@@ -387,45 +368,14 @@ function App() {
                 </div>
               </div>
               <div className="detail-info-section">
-                <span className="detail-tag-category">Premium Harvest</span>
                 <h1 className="detail-title">{currentProduct.name}</h1>
                 
-                <div className="detail-reviews">
-                  <span className="stars">⭐⭐⭐⭐⭐</span>
-                  <span className="reviews-text">4.9 / 5.0 (98 Reviews)</span>
-                </div>
-
                 <p className="detail-tagline-desc">{currentProduct.description}</p>
-
-                {/* Weight Selector */}
-                <div className="weight-selector-container">
-                  <h3 className="selector-title">Select Pack Weight:</h3>
-                  <div className="weight-options">
-                    {currentProduct.weight.split('/').map((w) => {
-                      const weightVal = w.trim();
-                      const isSelected = selectedWeight === weightVal;
-                      return (
-                        <button
-                          key={weightVal}
-                          className={`weight-opt-btn ${isSelected ? 'active' : ''}`}
-                          onClick={() => setSelectedWeight(weightVal)}
-                        >
-                          {weightVal}
-                        </button>
-                      );
-                    })}
-                  </div>
-                </div>
-
-                <div className="detail-pricing-box">
-                  <span className="pricing-label">Status:</span>
-                  <span className="pricing-value">In Stock (Organic Batch)</span>
-                </div>
 
                 {/* Direct Ordering CTAs */}
                 <div className="detail-action-buttons">
                   <a 
-                    href={getProductWhatsappLink(currentProduct.name, selectedWeight)}
+                    href={getProductWhatsappLink(currentProduct.name, currentProduct.netWeight)}
                     target="_blank" 
                     rel="noopener noreferrer" 
                     className="btn-whatsapp-large w-full justify-center"
@@ -442,54 +392,39 @@ function App() {
               </div>
             </div>
 
-            {/* Spec Tables & Benefits */}
+            {/* Product specifications */}
             <div className="product-tabbed-info">
               <div className="info-column">
-                <h3 className="sub-section-title">Health Benefits &amp; Features</h3>
-                <ul className="benefits-list">
-                  {currentProduct.benefits.map((benefit, i) => (
-                    <li key={i} className="benefit-item">
-                      <span className="check-icon">✓</span>
-                      <span>{benefit}</span>
-                    </li>
-                  ))}
-                  <li className="benefit-item">
-                    <span className="check-icon">✓</span>
-                    <span>100% natural, free from coloring or MSG</span>
-                  </li>
-                  <li className="benefit-item">
-                    <span className="check-icon">✓</span>
-                    <span>Packed in dynamic hygiene-seal packaging</span>
-                  </li>
-                </ul>
-
-                <h3 className="sub-section-title" style={{ marginTop: '35px' }}>Culinary Suggestions</h3>
-                <p className="culinary-desc">{currentProduct.usage}</p>
-              </div>
-
-              <div className="info-column">
-                <h3 className="sub-section-title">Product Specifications</h3>
+                <h3 className="sub-section-title">Pack Details</h3>
                 <table className="specs-table">
                   <tbody>
                     <tr>
-                      <td className="spec-label">Ingredients</td>
-                      <td className="spec-val">{currentProduct.ingredients}</td>
+                      <td className="spec-label">Product</td>
+                      <td className="spec-val">{currentProduct.name}</td>
                     </tr>
                     <tr>
-                      <td className="spec-label">Product Origin</td>
-                      <td className="spec-val">{currentProduct.origin}</td>
+                      <td className="spec-label">Net Weight</td>
+                      <td className="spec-val">{currentProduct.netWeight}</td>
                     </tr>
                     <tr>
-                      <td className="spec-label">Shelf Life</td>
-                      <td className="spec-val">{currentProduct.shelfLife}</td>
+                      <td className="spec-label">Energy / 100g</td>
+                      <td className="spec-val">{currentProduct.energyKcal} kcal</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+              <div className="info-column">
+                <h3 className="sub-section-title">Barcode &amp; Compliance</h3>
+                <table className="specs-table">
+                  <tbody>
+                    <tr>
+                      <td className="spec-label">Barcode / EAN</td>
+                      <td className="spec-val">{currentProduct.barcode}</td>
                     </tr>
                     <tr>
-                      <td className="spec-label">Form</td>
-                      <td className="spec-val">Premium Whole / Milled Powder</td>
-                    </tr>
-                    <tr>
-                      <td className="spec-label">Preservatives</td>
-                      <td className="spec-val">None (100% Organic Retention)</td>
+                      <td className="spec-label">FSSAI Lic. No.</td>
+                      <td className="spec-val">{currentProduct.fssaiLicense}</td>
                     </tr>
                   </tbody>
                 </table>
@@ -515,16 +450,15 @@ function App() {
                       onPointerCancel={resetProductImageRotation}
                       onClick={preventNavigationAfterImageRotation}
                     >
-                      <img src={p.image} alt={p.name} className="product-img" loading="lazy" />
-                      {p.badge && <span className="product-badge">{p.badge}</span>}
+                      <img src={p.image} alt={p.imageAlt} className="product-img" loading="lazy" />
                       <span className="product-rotate-hint" aria-hidden="true">↔ Drag to rotate</span>
                     </div>
                     <div className="product-content">
                       <h3 className="product-title">{p.name}</h3>
                       <p className="product-desc line-clamp">{p.description}</p>
                       <div className="product-meta">
-                        <span className="product-weight">Weight: {p.weight}</span>
-                        <span className="product-price">{p.price}</span>
+                        <span className="product-weight">Weight: {p.netWeight}</span>
+                        <span className="product-price">{p.energyKcal} kcal / 100g</span>
                       </div>
                       <button className="btn-product-view-details">
                         View Product Details
@@ -572,7 +506,7 @@ function App() {
                 loop
                 playsInline
                 preload="metadata"
-                poster={prd1}
+                poster={redChilliImage}
               >
                 <source src={landingVideo} type="video/mp4" />
                 Your browser does not support embedded videos.
@@ -651,16 +585,15 @@ function App() {
                       onPointerCancel={resetProductImageRotation}
                       onClick={preventNavigationAfterImageRotation}
                     >
-                      <img src={product.image} alt={product.name} className="product-img" loading="lazy" />
-                      {product.badge && <span className="product-badge">{product.badge}</span>}
+                      <img src={product.image} alt={product.imageAlt} className="product-img" loading="lazy" />
                       <span className="product-rotate-hint" aria-hidden="true">↔ Drag to rotate</span>
                     </div>
                     <div className="product-content">
                       <h3 className="product-title">{product.name}</h3>
                       <p className="product-desc line-clamp">{product.description}</p>
                       <div className="product-meta">
-                        <span className="product-weight">Weight: {product.weight}</span>
-                        <span className="product-price">{product.price}</span>
+                        <span className="product-weight">Weight: {product.netWeight}</span>
+                        <span className="product-price">{product.energyKcal} kcal / 100g</span>
                       </div>
                       <button className="btn-product-view-details">
                         View Product Details
@@ -669,6 +602,90 @@ function App() {
                   </div>
                 ))}
               </div>
+              <form className="bulk-order-panel" onSubmit={(event) => event.preventDefault()}>
+                <div className="bulk-order-heading">
+                  <span className="section-tag">Wholesale &amp; Group Orders</span>
+                  <h3 className="bulk-order-title">Ordering 20 packs or more?</h3>
+                  <p className="bulk-order-description">
+                    Choose quantities across any products. We’ll confirm bulk pricing, delivery, and payment details on WhatsApp.
+                  </p>
+                </div>
+
+                <div className="bulk-order-list">
+                  {products.map((product) => (
+                    <label className="bulk-order-item" key={product.id}>
+                      <img src={product.image} alt="" className="bulk-order-thumbnail" loading="lazy" />
+                      <span className="bulk-order-product-name">
+                        {product.name}
+                        <span>{product.netWeight} pack</span>
+                      </span>
+                      <span className="bulk-order-quantity-label">
+                        Packs
+                        <input
+                          type="number"
+                          min="0"
+                          max="999"
+                          step="1"
+                          inputMode="numeric"
+                          value={bulkQuantities[product.id] ?? 0}
+                          onChange={(event) => {
+                            const quantity = Number.parseInt(event.currentTarget.value, 10);
+                            setBulkQuantities(current => ({
+                              ...current,
+                              [product.id]: Number.isFinite(quantity) ? Math.min(999, Math.max(0, quantity)) : 0
+                            }));
+                          }}
+                          aria-label={`${product.name} quantity in packs`}
+                        />
+                      </span>
+                    </label>
+                  ))}
+                </div>
+
+                <fieldset className="bulk-payment-options">
+                  <legend>Preferred payment method</legend>
+                  <label>
+                    <input
+                      type="radio"
+                      name="bulk-payment"
+                      value="upi"
+                      checked={bulkPaymentMethod === 'upi'}
+                      onChange={() => setBulkPaymentMethod('upi')}
+                    />
+                    <span>UPI — request payment details on WhatsApp</span>
+                  </label>
+                  <label>
+                    <input
+                      type="radio"
+                      name="bulk-payment"
+                      value="cod"
+                      checked={bulkPaymentMethod === 'cod'}
+                      onChange={() => setBulkPaymentMethod('cod')}
+                    />
+                    <span>Cash on Delivery — subject to confirmation</span>
+                  </label>
+                </fieldset>
+
+                <div className="bulk-order-footer">
+                  <p className={`bulk-order-total ${bulkOrderQuantity >= minimumBulkQuantity ? 'is-eligible' : ''}`} aria-live="polite">
+                    {bulkOrderQuantity} / {minimumBulkQuantity} packs minimum
+                  </p>
+                  {bulkOrderQuantity >= minimumBulkQuantity ? (
+                    <a
+                      href={bulkOrderUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="btn-whatsapp-large bulk-order-submit"
+                    >
+                      Send bulk order on WhatsApp
+                    </a>
+                  ) : (
+                    <button type="button" className="btn-whatsapp-large bulk-order-submit" disabled>
+                      Add {minimumBulkQuantity - bulkOrderQuantity} more packs to continue
+                    </button>
+                  )}
+                </div>
+              </form>
             </div>
           </section>
 
@@ -760,7 +777,7 @@ function App() {
             <div className="lightbox-image-container">
               <img 
                 src={currentProduct.image} 
-                alt={currentProduct.name} 
+                alt={currentProduct.imageAlt}
                 className={`lightbox-image ${isImageZoomed ? 'zoomed' : ''}`} 
                 onClick={() => setIsImageZoomed(prev => !prev)}
                 title={isImageZoomed ? "Click to Zoom Out" : "Click to Zoom In"}
